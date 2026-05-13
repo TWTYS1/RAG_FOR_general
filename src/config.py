@@ -31,7 +31,7 @@ KEYWORD_BOOST_CHUNKS = True  # 为含 3GPP 关键词的段落生成强化索引�
 TOP_K = 8
 HYBRID_TOP_K = 50          # 混合检索初召回数
 RERANK_TOP_K = 15          # 重排序后保留数
-RERANK_ENABLED = True      # 启用 Cross-Encoder 重排序
+RERANK_ENABLED = False      # 启用 Cross-Encoder 重排序（需先下模型）
 RERANK_MODEL = os.getenv("RERANK_MODEL", "BAAI/bge-reranker-v2-m3")
 
 # --- 支持的文件格式 ---

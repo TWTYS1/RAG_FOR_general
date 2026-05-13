@@ -87,5 +87,16 @@ class BM25Index:
         self._ids.clear()
         self._bm25 = None
 
+    def rebuild_from(self, ids: list[str], texts: list[str], metadatas: list[dict]):
+        """从外部数据源全量重建 BM25 索引（用于进程重启后恢复）"""
+        self.clear()
+        if not texts:
+            return
+        self._corpus = list(texts)
+        self._metadatas = list(metadatas)
+        self._ids = list(ids)
+        tokenized = [self._tokenize(t) for t in texts]
+        self._bm25 = BM25Okapi(tokenized)
+
     def __len__(self) -> int:
         return len(self._corpus)

@@ -25,6 +25,29 @@ class Retriever:
         if use_hybrid and self.store._bm25 is None:
             self.store._bm25 = get_shared_bm25()
 
+        # BM25 为内存索引，进程重启后自动从 ChromaDB 恢复
+        if use_hybrid and len(self.store._bm25) == 0 and self.store.count() > 0:
+            self._restore_bm25()
+
+    def _restore_bm25(self):
+        """从 ChromaDB 全量恢复 BM25 索引"""
+        col = self.store._safe_collection()
+        total = col.count()
+        if total == 0:
+            return
+        batch_size = 1000
+        all_ids, all_texts, all_metas = [], [], []
+        for offset in range(0, total, batch_size):
+            batch = col.get(
+                limit=batch_size, offset=offset,
+                include=["documents", "metadatas"],
+            )
+            all_ids.extend(batch["ids"])
+            all_texts.extend(batch["documents"] or [])
+            all_metas.extend(batch["metadatas"] or [])
+        self.store._bm25.rebuild_from(all_ids, all_texts, all_metas)
+        print(f"[BM25] 已从 ChromaDB 恢复 {len(all_ids)} 条索引")
+
     def search(
         self,
         query: str,
