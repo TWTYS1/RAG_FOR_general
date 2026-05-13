@@ -175,7 +175,33 @@ class ChromaStore:
         try:
             col.delete(where={"source": source_path})
         except Exception:
-            pass  # 可能没有匹配项
+            pass
+
+    def count_by_source(self, source_path: str) -> int:
+        """查询指定 source 文件的 chunk 数量"""
+        col = self._safe_collection()
+        try:
+            result = col.get(where={"source": source_path}, include=[])
+            return len(result["ids"]) if result and result.get("ids") else 0
+        except Exception:
+            return 0
+
+    def get_all_source_stats(self) -> dict[str, int]:
+        """返回所有 source → chunk_count 的映射（用于审计）"""
+        col = self._safe_collection()
+        total = col.count()
+        if total == 0:
+            return {}
+        stats: dict[str, int] = {}
+        batch_size = 1000
+        for offset in range(0, total, batch_size):
+            batch = col.get(limit=batch_size, offset=offset, include=["metadatas"])
+            if batch and batch.get("metadatas"):
+                for meta in batch["metadatas"]:
+                    src = meta.get("source", "")
+                    if src:
+                        stats[src] = stats.get(src, 0) + 1
+        return stats
 
     def rebuild_bm25(self):
         """从 ChromaDB 全量重建 BM25 索引（增量更新后调用）"""
