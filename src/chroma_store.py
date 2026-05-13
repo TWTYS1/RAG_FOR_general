@@ -234,7 +234,8 @@ class ChromaStore:
         if self._safe_collection().count() == 0:
             return None
         sample = self._safe_collection().get(limit=1, include=["embeddings"])
-        if sample and sample.get("embeddings") and len(sample["embeddings"]) > 0:
+        emb = sample.get("embeddings") if sample else None
+        if emb is not None and len(emb) > 0:
             return len(sample["embeddings"][0])
         return None
 
