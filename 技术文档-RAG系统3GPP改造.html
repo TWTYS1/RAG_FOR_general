@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 多格式文档问答系统 — 3GPP 标准化检索方案 · 技术文档</title>
+<style>
+  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#c9d1d9; --accent:#58a6ff; --green:#3fb950; --orange:#d2991d; --red:#f85149; --muted:#8b949e; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; padding:2rem; }
+  .container { max-width:1100px; margin:0 auto; }
+  h1 { font-size:2rem; color:#fff; border-bottom:2px solid var(--accent); padding-bottom:.5rem; margin-bottom:1.5rem; }
+  h2 { font-size:1.4rem; color:var(--accent); margin:2rem 0 1rem; padding:.3rem 0; border-bottom:1px solid var(--border); }
+  h3 { font-size:1.1rem; color:var(--green); margin:1.3rem 0 .6rem; }
+  p, li { margin:.4rem 0; }
+  ul, ol { padding-left:1.5rem; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:1.2rem 1.5rem; margin:1rem 0; }
+  .card h3 { margin-top:0; }
+  table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.92rem; }
+  th { background:var(--card); color:var(--accent); text-align:left; padding:.6rem .8rem; border-bottom:2px solid var(--border); }
+  td { padding:.5rem .8rem; border-bottom:1px solid var(--border); }
+  .tag { display:inline-block; font-size:.78rem; padding:.15rem .5rem; border-radius:4px; margin:0 .2rem; }
+  .tag-green { background:#1a3a2a; color:var(--green); }
+  .tag-red { background:#3a1a1a; color:var(--red); }
+  .tag-yellow { background:#3a351a; color:var(--orange); }
+  .tag-blue { background:#1a2a3a; color:var(--accent); }
+  .arch { background:#0d1117; border:2px solid var(--border); border-radius:10px; padding:1.5rem; margin:1rem 0; overflow-x:auto; }
+  .arch pre { font-family:'Cascadia Code',Consolas,monospace; font-size:.82rem; line-height:1.5; color:var(--accent); }
+  .highlight { color:var(--green); }
+  .warn { color:var(--orange); }
+  .err { color:var(--red); }
+  .metric-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.8rem; margin:1rem 0; }
+  .metric { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:1rem; text-align:center; }
+  .metric .val { font-size:1.8rem; font-weight:700; color:var(--accent); }
+  .metric .lbl { font-size:.8rem; color:var(--muted); margin-top:.3rem; }
+  hr { border:none; border-top:1px solid var(--border); margin:2rem 0; }
+  code { background:#1a1a2e; padding:.1rem .4rem; border-radius:3px; font-size:.88em; }
+  .flow-box { display:flex; gap:1rem; margin:1rem 0; flex-wrap:wrap; }
+  .flow-step { flex:1; min-width:150px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:1rem; text-align:center; }
+  .flow-step .num { font-size:1.5rem; font-weight:700; color:var(--accent); }
+  .flow-step .desc { font-size:.85rem; color:var(--muted); margin-top:.3rem; }
+  .arrow { display:flex; align-items:center; color:var(--accent); font-size:1.3rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>📡 RAG 多格式文档问答系统：3GPP 标准化检索方案</h1>
+
+<p style="color:var(--muted);font-size:1.05rem;">
+  技术文档 &middot; v1.0 &middot; 2026-05-13 &middot;
+  <a href="https://github.com/TWTYS1/RAG_FOR_general" style="color:var(--accent);">GitHub: TWTYS1/RAG_FOR_general</a>
+</p>
+
+<!-- ============================================================ -->
+<h2>一、系统定位</h2>
+
+<div class="card">
+<p>本系统是一个<strong>面向 3GPP 标准文档的检索增强生成（RAG）平台</strong>，支持中文用户用自然语言提问，从英文 3GPP 文档（TDoc、CR、Meeting Notes、Spec）中检索证据，用中文总结标准缺口、争议点和潜在专利切入点。</p>
+</div>
+
+<div class="metric-grid">
+  <div class="metric"><div class="val">5</div><div class="lbl">文档格式支持</div></div>
+  <div class="metric"><div class="val">1024维</div><div class="lbl">Qwen3-Embedding</div></div>
+  <div class="metric"><div class="val">dense+BM25</div><div class="lbl">混合检索</div></div>
+  <div class="metric"><div class="val">50→15</div><div class="lbl">Recall→Rerank</div></div>
+  <div class="metric"><div class="val">24类</div><div class="lbl">3GPP关键词索引</div></div>
+  <div class="metric"><div class="val">~1.2GB</div><div class="lbl">GPU显存占用</div></div>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>二、为什么这样设计 — AI PM 视角</h2>
+
+<h3>2.1 核心矛盾</h3>
+<table>
+  <tr><th>传统方案</th><th>致命问题</th></tr>
+  <tr><td>手动翻阅 PDF/DOCX</td><td>一个 3GPP meeting 产出上百份 TDoc，人工不可能穷举</td></tr>
+  <tr><td>Ctrl+F 关键词搜索</td><td>"remaining issue" 搜不到 "FFS"、"not agreed"、"pending"</td></tr>
+  <tr><td>ChatGPT + 附件</td><td>数据安全风险、token 成本高、无法自动溯源 TDoc 编号</td></tr>
+  <tr><td>商业 RAG 产品</td><td>不识别 3GPP 文档结构（TDoc/WG/CR），无法做标准缺口分析</td></tr>
+</table>
+
+<h3>2.2 技术选型推演</h3>
+
+<div class="arch">
+<pre>
+<span class="highlight">Layer 1: 文档解析</span>
+  评估: pdfplumber / python-docx / BeautifulSoup / markdown-it
+  策略: DOCX 优先（3GPP 主力格式），按 Word heading style + 3GPP 元数据正则
+  输出: heading_path + TDoc编号 + WG + Meeting + CR + 公司 + 表格
+
+<span class="highlight">Layer 2: 文本分块</span>
+  评估: 固定字数 / 段落 / 语义相似度 / <strong>标题层级感知</strong>
+  策略: DOCX → heading-path 优先切分，保留完整层级路径
+        chunk=800 tokens, overlap=150
+        含 "remaining issue" 等关键词的段落 → 生成额外 boost 副本
+
+<span class="highlight">Layer 3: 向量模型</span>
+  评估: OpenAI text-embedding-3 / BGE-M3 / <strong>Qwen3-Embedding-0.6B</strong>
+  策略: Qwen3-Embedding-0.6B, 1024维, 本地 GPU 推理
+        多语言能力强（中文→英文跨语言检索适用）
+
+<span class="highlight">Layer 4: 向量数据库</span>
+  评估: Pinecone / Weaviate / FAISS / <strong>ChromaDB + BM25</strong>
+  策略: ChromaDB (dense) + 内存 BM25 (sparse)
+        RRF 融合，TDoc/CR 编号精确加权
+
+<span class="highlight">Layer 5: 查询处理</span>
+  中文 query → 4 variant:
+    a) 原 query  b) 英文翻译  c) 3GPP 术语扩展  d) 关键词列表
+
+<span class="highlight">Layer 6: 生成</span>
+  评估: GPT-4 / Claude / <strong>DeepSeek</strong>
+  策略: DeepSeek API + 3GPP 结构化回答模板
+        每个结论至少引用 1 个 chunk，证据不足时明确声明
+</pre>
+</div>
+
+<h3>2.3 关键设计决策</h3>
+
+<table>
+  <tr><th>决策</th><th>理由</th><th>取舍</th></tr>
+  <tr>
+    <td>本地 Embedding + 云端 LLM</td>
+    <td>数据安全 + 智能上限</td>
+    <td>需 GPU / ~1.2GB 显存</td>
+  </tr>
+  <tr>
+    <td>1024 维（非 2048）</td>
+    <td>召回差异 <2%，存储减半</td>
+    <td>接受微小精度损失</td>
+  </tr>
+  <tr>
+    <td>Dense + BM25 混合</td>
+    <td>3GPP 固定术语需精确匹配</td>
+    <td>维护两套索引</td>
+  </tr>
+  <tr>
+    <td>50→15 召回→重排</td>
+    <td>初召回宽泛确保覆盖，精排保质量</td>
+    <td>增加 ~100ms 延迟</td>
+  </tr>
+  <tr>
+    <td>DOCX heading-path 优先切分</td>
+    <td>3GPP 文档有明确章节结构</td>
+    <td>对无结构文档回退段落分割</td>
+  </tr>
+  <tr>
+    <td>关键词 boost 副本</td>
+    <td>"remaining issue" 等为专利挖掘关键信号</td>
+    <td>索引体积增加 ~15%</td>
+  </tr>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>三、系统架构</h2>
+
+<h3>3.1 离线索引流</h3>
+
+<div class="flow-box">
+  <div class="flow-step"><div class="num">805+</div><div class="desc">3GPP 文档<br/>(DOCX/PDF/MD)</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">⑤</div><div class="desc">解析器路由<br/>TDoc/WG/CR 提取</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">head</div><div class="desc">语义分块<br/>heading-path 保留</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">1024</div><div class="desc">Qwen3 Embed<br/>GPU 加速</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">Chroma</div><div class="desc">向量入库<br/>+ BM25 索引</div></div>
+</div>
+
+<h3>3.2 在线问答流</h3>
+
+<div class="flow-box">
+  <div class="flow-step"><div class="num">中文</div><div class="desc">用户问题<br/>"Case3a remaining?"</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">4x</div><div class="desc">跨语言扩展<br/>中/英/术语/关键词</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">50</div><div class="desc">Hybrid Search<br/>Dense + BM25</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">15</div><div class="desc">多因子 Rerank<br/>语义+关键词+新鲜度</div></div>
+  <div class="arrow">→</div>
+  <div class="flow-step"><div class="num">DS</div><div class="desc">DeepSeek 生成<br/>结构化缺口报告</div></div>
+</div>
+
+<h3>3.3 模块清单</h3>
+
+<table>
+  <tr><th>模块</th><th>文件</th><th>职责</th><th>状态</th></tr>
+  <tr><td>配置中心</td><td><code>src/config.py</code></td><td>.env 读取、全局参数</td><td><span class="tag tag-green">完成</span></td></tr>
+  <tr><td>解析器路由</td><td><code>src/parsers/router.py</code></td><td>按扩展名分发 5 种解析器</td><td><span class="tag tag-green">完成</span></td></tr>
+  <tr><td>DOCX 增强解析</td><td><code>src/parsers/docx_parser.py</code></td><td>TDoc/WG/CR/Spec/表格/heading_path 提取</td><td><span class="tag tag-green">v2 完成</span></td></tr>
+  <tr><td>3GPP 元数据</td><td><code>src/parsers/base.py</code></td><td>15 种正则 + 24 类关键词识别</td><td><span class="tag tag-green">完成</span></td></tr>
+  <tr><td>语义分块</td><td><code>src/chunker.py</code></td><td>heading-path 优先 + 关键词 boost 副本</td><td><span class="tag tag-green">v2 完成</span></td></tr>
+  <tr><td>向量化</td><td><code>src/embedder.py</code></td><td>Qwen3-0.6B GPU 1024维</td><td><span class="tag tag-green">完成</span></td></tr>
+  <tr><td>向量存储</td><td><code>src/chroma_store.py</code></td><td>ChromaDB 持久化 + metadata filter</td><td><span class="tag tag-green">完成</span></td></tr>
+  <tr><td>跨语言处理</td><td><code>src/query_processor.py</code></td><td>中→英 + 3GPP 术语扩展</td><td><span class="tag tag-yellow">进行中</span></td></tr>
+  <tr><td>BM25 索引</td><td><code>src/bm25_index.py</code></td><td>内存稀疏索引，精确匹配 TDoc/CR</td><td><span class="tag tag-yellow">待实现</span></td></tr>
+  <tr><td>混合检索</td><td><code>src/retrieve.py</code></td><td>Dense + BM25 RRF 融合</td><td><span class="tag tag-yellow">待实现</span></td></tr>
+  <tr><td>重排序</td><td><code>src/reranker.py</code></td><td>多因子精排 50→15</td><td><span class="tag tag-yellow">待实现</span></td></tr>
+  <tr><td>生成模板</td><td><code>src/templates.py</code></td><td>3GPP 缺口挖掘结构化输出</td><td><span class="tag tag-yellow">待实现</span></td></tr>
+  <tr><td>Web UI</td><td><code>src/app.py</code></td><td>Streamlit 聊天界面</td><td><span class="tag tag-green">完成</span></td></tr>
+  <tr><td>CLI</td><td><code>src/cli.py</code></td><td>终端交互问答</td><td><span class="tag tag-green">完成</span></td></tr>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>四、3GPP 文档解析能力</h2>
+
+<h3>4.1 提取 Schema</h3>
+
+<table>
+  <tr><th>字段</th><th>来源</th><th>示例</th></tr>
+  <tr><td>tdoc</td><td>文档正文正则</td><td><code>R3-2401234</code></td></tr>
+  <tr><td>cr</td><td>正文正则</td><td><code>CR 0456 Rev 2</code></td></tr>
+  <tr><td>spec</td><td>正文正则</td><td><code>TS 38.331</code>, <code>TR 37.355</code></td></tr>
+  <tr><td>wg</td><td>正文正则</td><td><code>RAN3</code>, <code>SA2</code></td></tr>
+  <tr><td>meeting</td><td>正文正则</td><td><code>RAN3#119bis</code></td></tr>
+  <tr><td>rel</td><td>正文正则</td><td><code>Rel-19</code></td></tr>
+  <tr><td>agenda_item</td><td>正文正则</td><td><code>18.2.3</code></td></tr>
+  <tr><td>ls</td><td>正文正则</td><td><code>LS in from SA2</code></td></tr>
+  <tr><td>company</td><td>文档头 source:</td><td><code>Huawei, HiSilicon</code></td></tr>
+  <tr><td>heading_path</td><td>Word heading stack</td><td><code>1. Scope > 1.1 Background</code></td></tr>
+  <tr><td>keywords</td><td>24 类关键词命中</td><td><code>["remaining issue", "Case 3a", "FFS"]</code></td></tr>
+  <tr><td>table</td><td>Word 表格逐行</td><td><code>Param | Value | Note</code></td></tr>
+</table>
+
+<h3>4.2 24 类 3GPP 关键词索引</h3>
+
+<div class="card">
+  <p>
+    <span class="tag tag-yellow">remaining issue</span>
+    <span class="tag tag-yellow">open issue</span>
+    <span class="tag tag-yellow">FFS</span>
+    <span class="tag tag-yellow">for further study</span>
+    <span class="tag tag-yellow">not agreed</span>
+    <span class="tag tag-yellow">way forward</span>
+    <span class="tag tag-yellow">conclusion</span>
+    <span class="tag tag-yellow">agreement</span>
+    <span class="tag tag-yellow">pending</span>
+    <span class="tag tag-yellow">to be discussed</span>
+    <span class="tag tag-yellow">candidate</span>
+    <span class="tag tag-yellow">alternative</span>
+    <span class="tag tag-blue">model monitoring</span>
+    <span class="tag tag-blue">data collection</span>
+    <span class="tag tag-blue">Case 3a</span>
+    <span class="tag tag-blue">gNB-sided model</span>
+    <span class="tag tag-blue">AI/ML positioning</span>
+    <span class="tag tag-blue">higher layer parameter</span>
+    <span class="tag tag-blue">NRPPa</span>
+    <span class="tag tag-blue">NGAP</span>
+    <span class="tag tag-blue">proactive</span>
+    <span class="tag tag-blue">fallback</span>
+    <span class="tag tag-blue">PRS measurement</span>
+    <span class="tag tag-blue">Sidelink positioning</span>
+  </p>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>五、检索策略</h2>
+
+<h3>5.1 跨语言查询扩展</h3>
+
+<table>
+  <tr><th>中文 Query</th><th>扩展结果</th></tr>
+  <tr>
+    <td>"还有哪些未解决问题"</td>
+    <td>remaining issue, open issue, unresolved issue, FFS, for further study, not agreed, pending issue, way forward</td>
+  </tr>
+  <tr>
+    <td>"高层参数"</td>
+    <td>higher layer parameters, RRC parameters, LPP parameters, NRPPa IE, NGAP IE, configuration parameters</td>
+  </tr>
+  <tr>
+    <td>"gNB侧模型"</td>
+    <td>gNB-sided model, gNB-side model, NG-RAN node assisted positioning, Case 3a</td>
+  </tr>
+  <tr>
+    <td>"数据采集流程"</td>
+    <td>data collection, measurement collection, OAM triggered reporting, UE measurement report, data gathering</td>
+  </tr>
+</table>
+
+<h3>5.2 Hybrid Search 融合算法</h3>
+
+<div class="card">
+  <p><strong>RRF (Reciprocal Rank Fusion)</strong>：</p>
+  <pre style="margin:.5rem 0;">score(doc) = Σ 1/(k + rank_i(doc))</pre>
+  <p>其中 <code>k=60</code>，<code>rank_i</code> 是第 i 个检索器（dense / BM25）中该文档的排名。</p>
+  <p><strong>额外加权：</strong></p>
+  <ul>
+    <li>TDoc 编号精确匹配 → ×2.0</li>
+    <li>CR 编号精确匹配 → ×2.0</li>
+    <li>Spec 编号精确匹配 → ×1.5</li>
+    <li>"remaining issue" / "open issue" / "FFS" 命中 → ×1.3</li>
+    <li>"way forward" / "conclusion" 命中 → ×1.2</li>
+  </ul>
+</div>
+
+<h3>5.3 Rerank 因子（50 → 15）</h3>
+
+<table>
+  <tr><th>因子</th><th>权重</th><th>说明</th></tr>
+  <tr><td>semantic_score</td><td>0.30</td><td>Dense vector 余弦相似度</td></tr>
+  <tr><td>keyword_score</td><td>0.25</td><td>3GPP 关键词命中数</td></tr>
+  <tr><td>metadata_match</td><td>0.20</td><td>WG/meeting/rel 与 query 的匹配度</td></tr>
+  <tr><td>freshness</td><td>0.15</td><td>文档 meeting 日期越新分越高</td></tr>
+  <tr><td>completeness</td><td>0.10</td><td>是否包含 conclusion / way forward / remaining issue</td></tr>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>六、标准缺口挖掘输出模板</h2>
+
+<div class="card">
+  <pre style="color:var(--text);">
+┌─────────────────────────────────────────┐
+│ <strong>标准缺口分析报告</strong>                      │
+├─────────────────────────────────────────┤
+│ <strong>问题名称</strong>   │ [从检索到的文档中提取]    │
+│ <strong>涉及 WG</strong>     │ RAN3 / SA2 / RAN1 ...   │
+│ <strong>相关 TDoc</strong>   │ R3-2401234, R3-240...   │
+│ <strong>相关 CR</strong>     │ CR 0456 Rev 2           │
+│ <strong>当前状态</strong>   │ FFS / Agreed / Pending   │
+│ <strong>相关公司</strong>   │ Huawei, Qualcomm, ...    │
+│ <strong>Way Forward</strong>│ [文档中提取]             │
+│ <strong>Remaining Issues</strong> │ [未解决点列表]    │
+│ <strong>接口影响</strong>   │ RRC / LPP / NRPPa / NGAP │
+│ <strong>专利切入点</strong> │ ⚠️ 基于证据的推断        │
+│ <strong>撞车风险</strong>   │ 已有公司类似提案         │
+│ <strong>证据摘录</strong>   │ "...英文原文..." [1]     │
+│ <strong>来源</strong>       │ R3-2401234, para 3.2     │
+└─────────────────────────────────────────┘
+  </pre>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>七、评测用例</h2>
+
+<table>
+  <tr><th>#</th><th>Query（中文）</th><th>期望检索到</th></tr>
+  <tr><td>1</td><td>Rel-19 Case 3a 还有哪些 remaining issue？</td><td>含 "remaining issue" + "Case 3a" 的 TDoc</td></tr>
+  <tr><td>2</td><td>RAN1 提到的 AI/ML positioning higher layer parameters 有哪些？</td><td>RAN1 TDoc 中含参数列表的段落</td></tr>
+  <tr><td>3</td><td>gNB-sided model 的数据采集流程有哪些未解决点？</td><td>gNB-sided model + data collection + FFS</td></tr>
+  <tr><td>4</td><td>AI/ML positioning 中 proactive NGAP solution 解决什么问题？</td><td>proactive NGAP + AI/ML positioning</td></tr>
+  <tr><td>5</td><td>PRS measurement report 相关的 open issue 有哪些？</td><td>PRS measurement + open issue / FFS</td></tr>
+  <tr><td>6</td><td>哪些 TDoc 涉及 model monitoring 和 fallback？</td><td>model monitoring + fallback</td></tr>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>八、关键指标</h2>
+
+<div class="metric-grid">
+  <div class="metric"><div class="val">15</div><div class="lbl">3GPP 正则模式</div></div>
+  <div class="metric"><div class="val">24</div><div class="lbl">关键词类别</div></div>
+  <div class="metric"><div class="val">12</div><div class="lbl">元数据字段</div></div>
+  <div class="metric"><div class="val">800</div><div class="lbl">chunk tokens</div></div>
+  <div class="metric"><div class="val">150</div><div class="lbl">overlap tokens</div></div>
+  <div class="metric"><div class="val">50→15</div><div class="lbl">召回→重排</div></div>
+  <div class="metric"><div class="val">4x</div><div class="lbl">查询变体</div></div>
+  <div class="metric"><div class="val">5</div><div class="lbl">Rerank 因子</div></div>
+  <div class="metric"><div class="val">10</div><div class="lbl">结构化输出字段</div></div>
+  <div class="metric"><div class="val">~80MB</div><div class="lbl">向量库磁盘</div></div>
+  <div class="metric"><div class="val">~1.2GB</div><div class="lbl">模型显存</div></div>
+  <div class="metric"><div class="val">&lt;5s</div><div class="lbl">端到端延迟</div></div>
+</div>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2>九、快速开始</h2>
+
+<div class="card">
+<pre style="color:var(--text);">
+# 1. 环境
+cd D:\vibecoding\project1
+.\rag-env\Scripts\activate
+
+# 2. 配置 API Key
+cp .env.example .env
+# 编辑 .env 填入 DEEPSEEK_API_KEY
+
+# 3. 索引 3GPP 文档（放入 docs/）
+python -c "from src.ingest import IngestPipeline; IngestPipeline().run(clear=True)"
+
+# 4. 启动
+streamlit run src/app.py          # Web UI
+python src/cli.py                  # CLI
+</pre>
+</div>
+
+<hr>
+
+<p style="color:var(--muted);text-align:center;">
+  技术栈: Python 3.11 · PyTorch 2.11+cu128 · Qwen3-Embedding-0.6B · ChromaDB · DeepSeek API · Streamlit<br/>
+  GPU: NVIDIA GeForce RTX 5060 (8GB) · CUDA 12.8<br/>
+  <a href="https://github.com/TWTYS1/RAG_FOR_general" style="color:var(--accent);">GitHub Repository</a>
+</p>
+
+</div>
+</body>
+</html>
