@@ -30,3 +30,4 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+chroma_data_3gpp/

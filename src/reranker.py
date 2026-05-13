@@ -1,9 +1,39 @@
 """Cross-Encoder 重排序: 对初召回的候选集精排，提升 3GPP 术语匹配精度"""
 
+import os
 import torch
+from pathlib import Path
 from .config import RERANK_TOP_K
 
 _MODEL_CACHE: dict[str, object] = {}
+
+# 多源模型搜索路径（HF cache + ModelScope cache）
+_MODEL_SEARCH_PATHS = [
+    Path(os.getenv("HF_HUB_CACHE", "")) if os.getenv("HF_HUB_CACHE") else None,
+    Path.home() / ".cache" / "huggingface" / "hub",
+    Path("D:/vibecoding/models"),
+]
+
+
+def _resolve_model_path(model_name: str) -> str | None:
+    """在多个缓存目录中查找本地模型，返回绝对路径"""
+    for base in _MODEL_SEARCH_PATHS:
+        if base is None:
+            continue
+        # ModelScope 风格: base/BAAI/bge-reranker-v2-m3/
+        candidate = base / model_name
+        if candidate.is_dir() and (candidate / "model.safetensors").exists():
+            return str(candidate)
+        # HF 风格: base/models--BAAI--bge-reranker-v2-m3/snapshots/xxx/
+        hf_name = f"models--{model_name.replace('/', '--')}"
+        hf_dir = base / hf_name
+        if hf_dir.is_dir():
+            snapshots = hf_dir / "snapshots"
+            if snapshots.is_dir():
+                for snap in snapshots.iterdir():
+                    if (snap / "model.safetensors").exists():
+                        return str(snap)
+    return None
 
 
 class Reranker:
@@ -25,16 +55,23 @@ class Reranker:
         from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
         self._device = "cuda" if torch.cuda.is_available() else "cpu"
-        try:
-            self._tokenizer = AutoTokenizer.from_pretrained(
-                self.model_name, local_files_only=True
-            )
-            self._model = AutoModelForSequenceClassification.from_pretrained(
-                self.model_name, local_files_only=True
-            )
-        except Exception:
-            self._tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-            self._model = AutoModelForSequenceClassification.from_pretrained(self.model_name)
+
+        # 先在多源缓存中查找本地模型
+        local_path = _resolve_model_path(self.model_name)
+        if local_path:
+            self._tokenizer = AutoTokenizer.from_pretrained(local_path)
+            self._model = AutoModelForSequenceClassification.from_pretrained(local_path)
+        else:
+            try:
+                self._tokenizer = AutoTokenizer.from_pretrained(
+                    self.model_name, local_files_only=True
+                )
+                self._model = AutoModelForSequenceClassification.from_pretrained(
+                    self.model_name, local_files_only=True
+                )
+            except Exception:
+                self._tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+                self._model = AutoModelForSequenceClassification.from_pretrained(self.model_name)
 
         self._model.to(self._device)
         self._model.eval()
