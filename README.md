@@ -126,36 +126,43 @@ Layer 5: 大语言模型（Generation）
 ### 3.1 宏观架构
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                     用户界面                          │
-│           Streamlit Web UI  /  CLI 终端              │
-└──────────────┬──────────────────┬───────────────────┘
-               │                  │
-    ┌──────────▼──────────┐  ┌───▼────────────────────┐
-    │   离线索引流程       │  │   在线问答流程          │
-    │                     │  │                        │
-    │  docs/ (805 文件)    │  │  "useEffect 怎么用?"   │
-    │    │                │  │    │                   │
-    │    ▼                │  │    ▼                   │
-    │  解析器路由          │  │  Embedding (Qwen3)     │
-    │  PDF→pdfplumber     │  │  问题 → 1024维向量     │
-    │  MD→markdown-it     │  │    │                   │
-    │  HTML→BS4           │  │    ▼                   │
-    │  DOCX→python-docx   │  │  ChromaDB 语义搜索     │
-    │    │                │  │  Top-K=8 片段         │
-    │    ▼                │  │    │                   │
-    │  语义分块器          │  │    ▼                   │
-    │  MD→标题感知        │  │  组装 Prompt           │
-    │  段→句→递归回退     │  │  片段 + 系统指令       │
-    │    │                │  │    │                   │
-    │    ▼                │  │    ▼                   │
-    │  Embedding (Qwen3)   │  │  DeepSeek API          │
-    │  文本 → 1024维向量   │  │  生成可溯源回答         │
-    │    │                │  │                        │
-    │    ▼                │  │                        │
-    │  ChromaDB 入库       │  │                        │
-    │  chroma_data/       │  │                        │
-    └─────────────────────┘  └────────────────────────┘
+                    用户界面
+           Streamlit Web UI  /  CLI 终端
+                         │
+         ┌───────────────┴───────────────┐
+         ▼                               ▼
+   离线索引流程                      在线问答流程
+         │                               │
+  docs/3gpp/ (TDoc/CR/Spec)      中文 query
+         │                               │
+  解析器路由 → DOCX/PDF               ▼
+         │                    QueryProcessor
+         ▼                    (中→英 + 术语扩展
+  3GPP 元数据提取               + 4-variant生成)
+  (TDoc/WG/Meeting)                  │
+         │                    ┌───────┴───────┐
+  SemanticChunker             ▼               ▼
+  (heading-path感知        Dense          Sparse
+   + 关键词加权副本)     Embedder          BM25
+         │               (Qwen3)      (exact×1.5
+         ▼                  │          boost×1.15)
+  Embedding (Qwen3)     ChromaDB            │
+  文本 → 1024维向量      Top-50         Top-50
+         │                  │               │
+         ▼                  └───┬───────────┘
+  ChromaDB + BM25              ▼
+  (双索引同步入库)         RRF 融合 (k=60)
+                              │
+                         Cross-Encoder
+                           重排序
+                              │
+                         Top-8/15 片段
+                              │
+                         模板路由
+                    (差距/问题/专利/通用)
+                              │
+                         DeepSeek API
+                         生成回答 + 来源标注
 ```
 
 ### 3.2 核心流程
@@ -163,17 +170,17 @@ Layer 5: 大语言模型（Generation）
 **离线索引（一次性）**
 
 ```
-805 文件 → FileTypeRouter → 解析去噪 → SemanticChunker → 分块
-→ Embedder(GPU) → 1024维向量 → ChromaDB 持久化
-→ 输出：4584 chunks，可检索
+3GPP 文档 → FileTypeRouter → DOCX解析（TDoc/WG/Meeting提取）
+→ SemanticChunker（heading-path + 关键词副本）→ Embedder(GPU/1024维)
+→ ChromaDB 持久化 + BM25 内存索引 → 双索引就绪
 ```
 
 **在线问答（每次）**
 
 ```
-用户问题 → Embedder(GPU) → 1024维向量 → ChromaDB.search(Top-K=8)
-→ format_context(8片段) → Prompt 组装 → DeepSeek API
-→ 回答（含来源标注 [1][2]...）
+中文 query → QueryProcessor（术语扩展 + variant生成）
+→ Hybrid Search: Dense(Top-50) + BM25(Top-50) → RRF融合
+→ Cross-Encoder 重排序 → 模板路由 → DeepSeek 生成 → 回答+标注
 ```
 
 ### 3.3 模块职责
@@ -182,14 +189,21 @@ Layer 5: 大语言模型（Generation）
 |------|------|------|
 | 配置中心 | `src/config.py` | .env 读取、全局常量 |
 | 解析器路由 | `src/parsers/router.py` | 按扩展名分发到 5 种解析器 |
-| 语义分块 | `src/chunker.py` | Markdown 感知 + 递归回退 + Token 控制 |
+| DOCX 解析器 | `src/parsers/docx_parser.py` | 3GPP DOCX：TDoc/CR/Spec/WG/Meeting 提取 |
+| 元数据提取 | `src/parsers/base.py` | 15 个 3GPP 正则 + 24 类关键词 |
+| 语义分块 | `src/chunker.py` | heading-path 感知 + 3GPP 关键词加权副本 |
 | 向量化 | `src/embedder.py` | Qwen3-Embedding-0.6B 本地推理，GPU 加速 |
-| 向量存储 | `src/chroma_store.py` | ChromaDB 读写、维度检测、metadata 过滤 |
-| 检索 | `src/retrieve.py` | Query → Embedding → Search → Context 格式化 |
-| 生成 | `src/generate.py` | Prompt 工程 → DeepSeek API → 答案后处理 |
-| 索引管道 | `src/ingest.py` | 串联解析→分块→向量化→入库全流程 |
-| Web UI | `src/app.py` | Streamlit 界面，聊天式交互 |
-| CLI | `src/cli.py` | 终端问答，/index /filter /sources 命令 |
+| 向量存储 | `src/chroma_store.py` | ChromaDB + BM25 同步 + Hybrid Search (RRF) |
+| 稀疏索引 | `src/bm25_index.py` | BM25 关键词检索 + exact/boost 加权 |
+| 跨语言处理 | `src/query_processor.py` | 中→英术语映射 + 固定术语 + variant 生成 |
+| 重排序 | `src/reranker.py` | Cross-Encoder (bge-reranker-v2-m3) 精排 |
+| 结构化模板 | `src/templates.py` | 差距分析/剩余问题/专利机会 三大模板 |
+| 检索 | `src/retrieve.py` | Hybrid → Rerank → Context（TDoc/WG 展示）|
+| 生成 | `src/generate.py` | 3GPP System Prompt + 模板路由 → DeepSeek |
+| 索引管道 | `src/ingest.py` | 解析→分块→向量化→双索引全流程 |
+| Web UI | `src/app.py` | Streamlit，增强 3GPP 元数据展示 |
+| CLI | `src/cli.py` | 终端问答，/index /filter /sources |
+| 术语配置 | `config/` | 用户可编辑 fixed_terms.txt + term_map.txt |
 
 ---
 
@@ -197,46 +211,57 @@ Layer 5: 大语言模型（Generation）
 
 ### 4.1 系统交付物
 
-- **Streamlit Web 应用**：聊天式问答界面，支持文件类型筛选、来源溯源
-- **CLI 命令行工具**：终端交互式问答
-- **ChromaDB 向量库**：4584 个语义 chunks，覆盖 264 份文档
-- **可执行测试脚本**：`scripts/test_pipeline.py` 端到端验证
+- **Streamlit Web 应用**：聊天式问答，3GPP 元数据展示（TDoc/WG/Meeting/rrf_score）
+- **CLI 命令行工具**：终端交互，支持 /index /filter /sources 命令
+- **Hybrid 搜索引擎**：Dense (Qwen3) + Sparse (BM25) + RRF 融合 + Cross-Encoder 重排
+- **3GPP 模板引擎**：自动路由差距分析 / 剩余问题 / 专利机会 三大模板
+- **可配置术语表**：`config/` 下编辑即生效，无需改代码
+- **评估套件**：5 维度 × 15+ 测试查询
 
-### 4.2 回答质量要求
+### 4.2 回答质量保证
 
 | 维度 | 目标 | 实现方式 |
 |------|------|----------|
-| 准确性 | 不编造信息 | System Prompt 约束 + low temperature (0.3) |
-| 可溯源 | 每次回答标注来源 | `[1] 来源: file.md · [MD] · 第3页` |
-| 完整性 | 多片段拼合 | Top-K=8，取多个相关段落 |
-| 响应速度 | <5 秒 | GPU Embedding + DeepSeek API 快 |
-| 安全 | 数据不出境（Embedding） | 本地模型，仅问题文本调 API |
+| 准确性 | 不编造信息 | System Prompt 约束 + low temperature (0.2) |
+| 证据约束 | 每结论至少 1 个引用 | 模板强制要求 `[n]` 来源标注 |
+| 术语精确 | TDoc/CR/Spec 编号匹配 | BM25 exact boost ×1.5 + fixed_terms 匹配 |
+| 跨语言 | 中文问 → 英文 3GPP 查 | QueryProcessor 中→英 + variant 生成 |
+| 结构化 | 按场景出不同格式 | 差距/问题/专利三大模板自动路由 |
 
 ### 4.3 效果示例
 
 ```
-问：React 中 useEffect 怎么用？
+问：Rel-19 Case 3a 还有哪些 remaining issue？
 
-答：useEffect 是一个 React Hook，用于将组件与外部系统同步 [1]。
-它接受两个参数：一个包含副作用逻辑的函数，和一个依赖数组。
-当依赖数组中的值变化时，effect 会重新执行 [1]。
-返回 undefined [2]。
+答：**🔍 剩余问题追踪**
 
-[1] 来源: useEffect.md · [MD]
-[2] 来源: useEffect.md · [MD]
+### Open Issue 清单
+| # | Issue 描述 | TDoc | WG | 优先级 |
+|---|-----------|------|----|--------|
+| 1 | gNB-sided model 训练数据采集流程未定义 [1] | R1-2506173 | RAN1 | High |
+| 2 | model monitoring 触发条件待明确 [2] | R1-2501410 | RAN1 | Medium |
+
+### 详细分析
+**Issue 1**: gNB-sided model 数据采集...
+- **背景**: Rel-19 AI/ML positioning 定义了 Case 3a... [1]
+- **阻塞原因**: OAM-based 和 RRC-based 方案未达成共识 [3]
+
+[1] R1-2506173 Maintenance on AI-ML-based positioning.docx
+[2] R1-2501410 Summary#1 AIML-positioning.docx
 ```
 
 ### 4.4 关键指标
 
-| 指标 | 当前值 |
-|------|--------|
-| 索引文档数 | 264 文件 → 4584 chunks |
+| 指标 | 值 |
+|------|-----|
 | Embedding 维度 | 1024 |
+| 混合检索初召回 | 50 (Dense) + 50 (BM25) |
+| RRF 融合后 | Top-50 |
+| 重排序后 | Top-8~15 |
 | 单次 Embedding | ~20ms (GPU) |
-| 检索延迟 | <100ms |
-| 生成延迟 | 2-5s (DeepSeek API) |
-| 显存占用 | ~1.2GB (Qwen3-0.6B) |
-| 磁盘占用 | ~80MB (向量库) + 1.2GB (模型) |
+| 检索延迟 | <200ms (含 BM25 + RRF) |
+| 生成延迟 | 3-8s (DeepSeek API + 长模板) |
+| 显存占用 | ~1.2GB (Qwen3-0.6B) + ~1.5GB (reranker) |
 
 ---
 
@@ -245,30 +270,36 @@ Layer 5: 大语言模型（Generation）
 ### 环境要求
 
 - Python 3.11+
-- NVIDIA GPU + CUDA 12.8+（可选，CPU 也可跑）
+- NVIDIA GPU + CUDA 12.8+（可选，CPU 也可跑但慢）
 - DeepSeek API Key
 
 ### 安装
 
 ```bash
-# 1. 克隆项目
+# 1. 环境准备
 cd D:\vibecoding\project1
-
-# 2. 创建虚拟环境 + 安装依赖
 python -m venv rag-env
 .\rag-env\Scripts\activate
 pip install -r requirements.txt
 
-# 3. 配置环境变量
+# 2. 配置
 cp .env.example .env
 # 编辑 .env，填入 DEEPSEEK_API_KEY
+# DOCS_DIR 默认指向 ./docs/3gpp
 
-# 4. 下载 Embedding 模型（约 1.2GB）
-$env:HF_HUB_CACHE = "D:\vibecoding\models"
-huggingface-cli download Qwen/Qwen3-Embedding-0.6B
+# 3. 下载模型
+# Qwen3-Embedding-0.6B（约 1.2GB）
+# bge-reranker-v2-m3（约 1.5GB，可选，关闭 RERANK_ENABLED=false 跳过）
 
-# 5. 索引文档
-python -c "from src.ingest import IngestPipeline; IngestPipeline().run()"
+# 4. 添加 3GPP 文档
+# 将 TDoc/CR/Meeting Notes/Spec 放入对应目录:
+#   docs/3gpp/tdocs/    — TDoc 文件 (.docx)
+#   docs/3gpp/specs/    — TS/TR (.pdf/.docx)
+#   docs/3gpp/meetings/ — Meeting Reports
+#   docs/3gpp/cr/       — Change Requests
+
+# 5. 索引
+python -c "from src.ingest import IngestPipeline; IngestPipeline().run(clear=True)"
 ```
 
 ### 启动
@@ -280,6 +311,10 @@ streamlit run src/app.py
 # 或命令行
 python src/cli.py
 ```
+
+### 自定义术语
+
+编辑 `config/fixed_terms.txt`（每行一个 3GPP 术语）和 `config/term_map.txt`（中文→英文映射），重启即生效。
 
 ---
 
@@ -306,32 +341,43 @@ project1/
 │   ├── cli.py              # CLI 交互问答
 │   ├── config.py           # 集中配置（.env 驱动）
 │   ├── embedder.py         # Qwen3-Embedding 封装
-│   ├── chunker.py          # 语义分块器（Markdown 感知）
-│   ├── chroma_store.py     # ChromaDB 存储层
-│   ├── retrieve.py         # 检索 + Context 格式化
+│   ├── chunker.py          # 语义分块器（heading-path + 关键词）
+│   ├── chroma_store.py     # ChromaDB + Hybrid Search (RRF)
+│   ├── bm25_index.py       # BM25 稀疏索引 + 加权
+│   ├── reranker.py         # Cross-Encoder 重排序
+│   ├── query_processor.py  # 跨语言查询扩展 + 术语映射
+│   ├── templates.py        # 3GPP 结构化回答模板
+│   ├── retrieve.py         # Hybrid 检索 → Rerank → Context
 │   ├── generate.py         # Prompt 组装 + LLM 调用
 │   ├── ingest.py           # 文档索引管道
-│   ├── test_runner.py      # 测试框架
 │   └── parsers/
 │       ├── router.py       # 文件类型路由
+│       ├── base.py         # 3GPP 元数据提取（15 正则 + 24 关键词）
+│       ├── docx_parser.py  # DOCX → python-docx（增强 3GPP）
 │       ├── pdf_parser.py   # PDF → pdfplumber
 │       ├── markdown_parser.py  # MD → markdown-it
 │       ├── html_parser.py  # HTML → BeautifulSoup
-│       ├── docx_parser.py  # DOCX → python-docx
 │       └── text_parser.py  # TXT 纯文本
-├── docs/                   # 文档库（按目录组织）
-│   ├── ebooks/             # PDF 论文（通信/PASS定位等）
-│   ├── my-notes/           # 个人笔记
-│   ├── react-docs/         # React 官方文档（英文）
-│   └── web-archive/        # 网页存档
+├── config/
+│   ├── fixed_terms.txt     # 用户可编辑：3GPP 固定术语（每行一条）
+│   └── term_map.txt        # 用户可编辑：中文→英文术语映射
+├── docs/
+│   └── 3gpp/               # 3GPP 文档库
+│       ├── tdocs/           # TDoc (.docx)
+│       ├── specs/           # TS/TR 技术规范
+│       ├── meetings/        # 会议纪要
+│       └── cr/              # Change Requests
 ├── scripts/
-│   └── test_pipeline.py    # 端到端测试脚本
-├── rag-env/                # Python 虚拟环境（gitignore）
-├── chroma_data/            # ChromaDB 持久化数据（gitignore）
-├── .env                    # API Key 等密钥（gitignore）
+│   ├── test_pipeline.py    # 端到端测试
+│   ├── test_chunker.py     # 分块测试
+│   ├── test_query_processor.py  # 查询扩展测试
+│   ├── test_hybrid.py      # 混合检索测试
+│   └── test_3gpp_queries.py    # 5 维度评估查询
+├── rag-env/                # 虚拟环境（gitignore）
+├── chroma_data_3gpp/       # ChromaDB 持久化数据（gitignore）
+├── .env                    # API Key（gitignore）
 ├── .env.example            # 环境变量模板
 ├── requirements.txt        # Python 依赖
-├── check_env.py            # 环境检查工具
 ├── CLAUDE.md               # AI 编程助手指令
 └── README.md               # 本文件
 ```
