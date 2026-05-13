@@ -167,6 +167,37 @@ class ChromaStore:
             hits.append(data)
         return hits
 
+    # ── 增量索引支持 ───────────────────────────────
+
+    def remove_by_source(self, source_path: str):
+        """按 source 字段删除 chunks（用于增量更新）"""
+        col = self._safe_collection()
+        try:
+            col.delete(where={"source": source_path})
+        except Exception:
+            pass  # 可能没有匹配项
+
+    def rebuild_bm25(self):
+        """从 ChromaDB 全量重建 BM25 索引（增量更新后调用）"""
+        if self._bm25 is None:
+            return
+        col = self._safe_collection()
+        total = col.count()
+        if total == 0:
+            self._bm25.clear()
+            return
+        batch_size = 1000
+        all_ids, all_texts, all_metas = [], [], []
+        for offset in range(0, total, batch_size):
+            batch = col.get(
+                limit=batch_size, offset=offset,
+                include=["documents", "metadatas"],
+            )
+            all_ids.extend(batch["ids"])
+            all_texts.extend(batch["documents"] or [])
+            all_metas.extend(batch["metadatas"] or [])
+        self._bm25.rebuild_from(all_ids, all_texts, all_metas)
+
     # ── 基础操作 ─────────────────────────────────────
 
     def count(self) -> int:
