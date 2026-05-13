@@ -1,0 +1,1160 @@
+{
+  "audit_time": "2026-05-14T03:23:53.405706",
+  "summary": {
+    "total_disk_files": 88,
+    "total_manifest_entries": 88,
+    "total_chroma_chunks": 11026,
+    "total_chroma_sources": 88,
+    "processed": 88,
+    "pending": 0,
+    "failed": 0,
+    "duplicate_tdocs": 3,
+    "suspicious": 0,
+    "bm25_entries": 0
+  },
+  "processed": [
+    {
+      "rel_path": "cr\\CR\\R2-2505704_(CR 37355-i50 AIML Pos).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2505704_(CR 37355-i50 AIML Pos).docx",
+      "file_size": 181597,
+      "mtime": 1755111838.0,
+      "in_manifest": true,
+      "chunk_count": 103,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2505704"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2506496_(CR 37355-i50 AIML Pos).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2506496_(CR 37355-i50 AIML Pos).docx",
+      "file_size": 200792,
+      "mtime": 1756947424.0,
+      "in_manifest": true,
+      "chunk_count": 115,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2506496"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2506584_(CR 37355-i50 AIML Pos).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2506584_(CR 37355-i50 AIML Pos).docx",
+      "file_size": 193247,
+      "mtime": 1757178762.0,
+      "in_manifest": true,
+      "chunk_count": 114,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2506584"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2508587_(AIML LPP Corrections).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2508587_(AIML LPP Corrections).docx",
+      "file_size": 116655,
+      "mtime": 1762885396.0,
+      "in_manifest": true,
+      "chunk_count": 69,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2508587"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2509349_(AIML LPP Corrections)_v04_Rap.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2509349_(AIML LPP Corrections)_v04_Rap.docx",
+      "file_size": 117622,
+      "mtime": 1763669178.0,
+      "in_manifest": true,
+      "chunk_count": 68,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2509349"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2600420_(CR 37355-j10 RAN4 Capabilities).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2600420_(CR 37355-j10 RAN4 Capabilities).docx",
+      "file_size": 70677,
+      "mtime": 1769619358.0,
+      "in_manifest": true,
+      "chunk_count": 40,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2600420"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2601822_(CR 37355-j20 AIML Capability).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2601822_(CR 37355-j20 AIML Capability).docx",
+      "file_size": 51206,
+      "mtime": 1775070036.0,
+      "in_manifest": true,
+      "chunk_count": 23,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2601822"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2602380.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2602380.docx",
+      "file_size": 56514,
+      "mtime": 1775182452.0,
+      "in_manifest": true,
+      "chunk_count": 23,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2602380"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2602466 Correction on TS 37.355 for AI-based positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2602466 Correction on TS 37.355 for AI-based positioning.docx",
+      "file_size": 36250,
+      "mtime": 1775181372.0,
+      "in_manifest": true,
+      "chunk_count": 17,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2602466"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2603280_(CR 37355-j20 AIML Capability).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2603280_(CR 37355-j20 AIML Capability).docx",
+      "file_size": 52250,
+      "mtime": 1778106824.0,
+      "in_manifest": true,
+      "chunk_count": 23,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2603280"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R2-2604121 AIML.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R2-2604121 AIML.docx",
+      "file_size": 61540,
+      "mtime": 1778201188.0,
+      "in_manifest": true,
+      "chunk_count": 29,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2604121"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-252501 - AIML NRPPa BLCR.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-252501 - AIML NRPPa BLCR.docx",
+      "file_size": 48149,
+      "mtime": 1745551872.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-252501"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-253117 - AIML NRPPa BLCR.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-253117 - AIML NRPPa BLCR.docx",
+      "file_size": 47986,
+      "mtime": 1745919460.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-253117"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-253980 - AIML NRPPa BLCR.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-253980 - AIML NRPPa BLCR.docx",
+      "file_size": 152863,
+      "mtime": 1749181574.0,
+      "in_manifest": true,
+      "chunk_count": 49,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-253980"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-255098 - AIML NRPPa BLCR.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-255098 - AIML NRPPa BLCR.docx",
+      "file_size": 281646,
+      "mtime": 1754385604.0,
+      "in_manifest": true,
+      "chunk_count": 181,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-255098"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-255978 (BL CR to 38.455) Introduction of AIML positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-255978 (BL CR to 38.455) Introduction of AIML positioning.docx",
+      "file_size": 290890,
+      "mtime": 1757053254.0,
+      "in_manifest": true,
+      "chunk_count": 184,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-255978"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-256693 Correction on the ASN.1 of Positioning Data Information for data collection.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-256693 Correction on the ASN.1 of Positioning Data Information for data collection.docx",
+      "file_size": 36637,
+      "mtime": 1759231890.0,
+      "in_manifest": true,
+      "chunk_count": 13,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-256693"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-256757 positioning data collection for case 3a.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-256757 positioning data collection for case 3a.docx",
+      "file_size": 34697,
+      "mtime": 1759459994.0,
+      "in_manifest": true,
+      "chunk_count": 17,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-256757"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-257022 - NRPPa AIML Phy.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-257022 - NRPPa AIML Phy.docx",
+      "file_size": 83016,
+      "mtime": 1759419428.0,
+      "in_manifest": true,
+      "chunk_count": 30,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-257022"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-257171 Correction on 38.455.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-257171 Correction on 38.455.docx",
+      "file_size": 57140,
+      "mtime": 1759465344.0,
+      "in_manifest": true,
+      "chunk_count": 27,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-257171"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-257232 Correction on the ASN.1 of Positioning Data Information for data collection.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-257232 Correction on the ASN.1 of Positioning Data Information for data collection.docx",
+      "file_size": 36978,
+      "mtime": 1760685178.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-257232"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-257237 - NRPPa AIML Phy.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-257237 - NRPPa AIML Phy.docx",
+      "file_size": 83092,
+      "mtime": 1760592110.0,
+      "in_manifest": true,
+      "chunk_count": 22,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-257237"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-257238.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-257238.docx",
+      "file_size": 72707,
+      "mtime": 1760608214.0,
+      "in_manifest": true,
+      "chunk_count": 22,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-257238"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-257321.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-257321.docx",
+      "file_size": 73249,
+      "mtime": 1760671838.0,
+      "in_manifest": true,
+      "chunk_count": 23,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-257321"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258062 Correction on the ASN.1 of Positioning Data Information for data collection.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258062 Correction on the ASN.1 of Positioning Data Information for data collection.docx",
+      "file_size": 37046,
+      "mtime": 1762494786.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258062"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258063 - NRPPa AIML Phy.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258063 - NRPPa AIML Phy.docx",
+      "file_size": 82932,
+      "mtime": 1762138254.0,
+      "in_manifest": true,
+      "chunk_count": 22,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258063"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258064.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258064.docx",
+      "file_size": 73261,
+      "mtime": 1762420356.0,
+      "in_manifest": true,
+      "chunk_count": 23,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258064"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258143 CR to Unavailable indication IE.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258143 CR to Unavailable indication IE.docx",
+      "file_size": 32815,
+      "mtime": 1762494262.0,
+      "in_manifest": true,
+      "chunk_count": 15,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258143"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258174 Positioning NRPPa.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258174 Positioning NRPPa.docx",
+      "file_size": 47712,
+      "mtime": 1762436164.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258174"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258238 Draft CR to TS38.455 on data collection.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258238 Draft CR to TS38.455 on data collection.docx",
+      "file_size": 34800,
+      "mtime": 1762407834.0,
+      "in_manifest": true,
+      "chunk_count": 13,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258238"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258793 Positioning NRPPa.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258793 Positioning NRPPa.docx",
+      "file_size": 47583,
+      "mtime": 1763677756.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258793"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-258822.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-258822.docx",
+      "file_size": 63031,
+      "mtime": 1763657956.0,
+      "in_manifest": true,
+      "chunk_count": 20,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258822"
+      ]
+    },
+    {
+      "rel_path": "cr\\CR\\R3-260177.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\cr\\CR\\R3-260177.docx",
+      "file_size": 35545,
+      "mtime": 1769676648.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-260177"
+      ]
+    },
+    {
+      "rel_path": "meetings\\Draft_Minutes_report_RAN1#124_v020.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\Draft_Minutes_report_RAN1#124_v020.docx",
+      "file_size": 1338106,
+      "mtime": 1778687623.2276878,
+      "in_manifest": true,
+      "chunk_count": 776,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\Final_Minutes_report_RAN1#120_v100.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\Final_Minutes_report_RAN1#120_v100.docx",
+      "file_size": 1095808,
+      "mtime": 1778687866.162945,
+      "in_manifest": true,
+      "chunk_count": 430,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\Final_Minutes_report_RAN1#120b_v100.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\Final_Minutes_report_RAN1#120b_v100.docx",
+      "file_size": 975857,
+      "mtime": 1778687900.8506477,
+      "in_manifest": true,
+      "chunk_count": 381,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\Final_Minutes_report_RAN1#121_v100.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\Final_Minutes_report_RAN1#121_v100.docx",
+      "file_size": 1663915,
+      "mtime": 1778687930.2452116,
+      "in_manifest": true,
+      "chunk_count": 475,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\Final_Minutes_report_RAN1#122_v100.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\Final_Minutes_report_RAN1#122_v100.docx",
+      "file_size": 947428,
+      "mtime": 1778687446.1774614,
+      "in_manifest": true,
+      "chunk_count": 486,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\Final_Minutes_report_RAN1#123_v100.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\Final_Minutes_report_RAN1#123_v100.docx",
+      "file_size": 1399414,
+      "mtime": 1778687551.4827938,
+      "in_manifest": true,
+      "chunk_count": 587,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\R1_25XXXXX_Minutes_report_RAN1#122bis_v104.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\R1_25XXXXX_Minutes_report_RAN1#122bis_v104.docx",
+      "file_size": 2569269,
+      "mtime": 1778687522.118798,
+      "in_manifest": true,
+      "chunk_count": 439,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\R2-2506702#131.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\R2-2506702#131.docx",
+      "file_size": 938113,
+      "mtime": 1778688059.8360524,
+      "in_manifest": true,
+      "chunk_count": 850,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2506702"
+      ]
+    },
+    {
+      "rel_path": "meetings\\R2-2508002#131.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\R2-2508002#131.docx",
+      "file_size": 1141162,
+      "mtime": 1778688118.7728732,
+      "in_manifest": true,
+      "chunk_count": 682,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2508002"
+      ]
+    },
+    {
+      "rel_path": "meetings\\R2-2600002#131.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\R2-2600002#131.docx",
+      "file_size": 2030403,
+      "mtime": 1778688232.894362,
+      "in_manifest": true,
+      "chunk_count": 627,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2600002"
+      ]
+    },
+    {
+      "rel_path": "meetings\\R2-2601402#133.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\R2-2601402#133.docx",
+      "file_size": 818430,
+      "mtime": 1778688283.4253614,
+      "in_manifest": true,
+      "chunk_count": 610,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2601402"
+      ]
+    },
+    {
+      "rel_path": "meetings\\draft_RAN3 #129 Meeting Report_v1.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\draft_RAN3 #129 Meeting Report_v1.docx",
+      "file_size": 277022,
+      "mtime": 1778688437.4344518,
+      "in_manifest": true,
+      "chunk_count": 316,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\draft_RAN3 #129bis Meeting Report_v1.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\draft_RAN3 #129bis Meeting Report_v1.docx",
+      "file_size": 221606,
+      "mtime": 1778688466.6038785,
+      "in_manifest": true,
+      "chunk_count": 240,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\draft_RAN3#130_Meeting_Report_v1.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\draft_RAN3#130_Meeting_Report_v1.docx",
+      "file_size": 225977,
+      "mtime": 1778688560.1975758,
+      "in_manifest": true,
+      "chunk_count": 243,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "meetings\\draft_RAN3#131_Meeting_Report_v1.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\meetings\\draft_RAN3#131_Meeting_Report_v1.docx",
+      "file_size": 221595,
+      "mtime": 1778688583.931709,
+      "in_manifest": true,
+      "chunk_count": 234,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "specs\\TR 38.843-5.3.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\specs\\TR 38.843-5.3.docx",
+      "file_size": 13893,
+      "mtime": 1774540300.7291486,
+      "in_manifest": true,
+      "chunk_count": 4,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "specs\\TR 38.843-6.4.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\specs\\TR 38.843-6.4.docx",
+      "file_size": 186900,
+      "mtime": 1774606880.0968683,
+      "in_manifest": true,
+      "chunk_count": 68,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "specs\\TR 38.843-7.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\specs\\TR 38.843-7.docx",
+      "file_size": 19675,
+      "mtime": 1774541918.6539443,
+      "in_manifest": true,
+      "chunk_count": 12,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "tdocs\\R1-2500060 Ericsson AI ML for Positioning Accuracy Enhancement.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2500060 Ericsson AI ML for Positioning Accuracy Enhancement.docx",
+      "file_size": 713802,
+      "mtime": 1774578703.8877213,
+      "in_manifest": true,
+      "chunk_count": 230,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2500060"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2500067 Discussion on AIML-based positioning enhancement.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2500067 Discussion on AIML-based positioning enhancement.docx",
+      "file_size": 743266,
+      "mtime": 1774579166.7505593,
+      "in_manifest": true,
+      "chunk_count": 107,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2500067"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2500090.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2500090.docx",
+      "file_size": 194672,
+      "mtime": 1774589982.9889722,
+      "in_manifest": true,
+      "chunk_count": 111,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2500090"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2500389(S2-2501341).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2500389(S2-2501341).docx",
+      "file_size": 36636,
+      "mtime": 1774584790.3850842,
+      "in_manifest": true,
+      "chunk_count": 5,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2500389"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2500687 Specification support for AI-enabled positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2500687 Specification support for AI-enabled positioning.docx",
+      "file_size": 48801,
+      "mtime": 1774596809.7368133,
+      "in_manifest": true,
+      "chunk_count": 22,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2500687"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2500767 Discussion on Specification Support for AI-ML-based positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2500767 Discussion on Specification Support for AI-ML-based positioning.docx",
+      "file_size": 889061,
+      "mtime": 1774587804.649706,
+      "in_manifest": true,
+      "chunk_count": 65,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2500767"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2500991_Fraunhofer.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2500991_Fraunhofer.docx",
+      "file_size": 119760,
+      "mtime": 1774596732.0689707,
+      "in_manifest": true,
+      "chunk_count": 34,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2500991"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2501410 Summary#1 AIML-positioning-v018_Nokia_Moderator.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2501410 Summary#1 AIML-positioning-v018_Nokia_Moderator.docx",
+      "file_size": 199375,
+      "mtime": 1774579551.9898045,
+      "in_manifest": true,
+      "chunk_count": 303,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2501410"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2501629 Final summary AIML positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2501629 Final summary AIML positioning.docx",
+      "file_size": 306660,
+      "mtime": 1774580036.4860487,
+      "in_manifest": true,
+      "chunk_count": 446,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2501629"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2501639 Draft LS on AIML Positioning 3b.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2501639 Draft LS on AIML Positioning 3b.docx",
+      "file_size": 46333,
+      "mtime": 1774580083.727104,
+      "in_manifest": true,
+      "chunk_count": 11,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2501639"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2501718.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2501718.docx",
+      "file_size": 497984,
+      "mtime": 1773948180.5359664,
+      "in_manifest": true,
+      "chunk_count": 35,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2501718"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2501947 ML based positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2501947 ML based positioning.docx",
+      "file_size": 70045,
+      "mtime": 1774536569.5283058,
+      "in_manifest": true,
+      "chunk_count": 18,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2501947"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505203.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505203.docx",
+      "file_size": 170888,
+      "mtime": 1773983913.7101662,
+      "in_manifest": true,
+      "chunk_count": 32,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505203"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505253 ML based positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505253 ML based positioning.docx",
+      "file_size": 124483,
+      "mtime": 1773983948.7326808,
+      "in_manifest": true,
+      "chunk_count": 9,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505253"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505484 Discussion on maintenance of AI positioning enhancement.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505484 Discussion on maintenance of AI positioning enhancement.docx",
+      "file_size": 24564,
+      "mtime": 1773983978.2421365,
+      "in_manifest": true,
+      "chunk_count": 6,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505484"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505531 R19 aipos.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505531 R19 aipos.docx",
+      "file_size": 75326,
+      "mtime": 1773984001.3746715,
+      "in_manifest": true,
+      "chunk_count": 9,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505531"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505732-AI POS-v0.0.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505732-AI POS-v0.0.docx",
+      "file_size": 57065,
+      "mtime": 1773984031.983013,
+      "in_manifest": true,
+      "chunk_count": 20,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505732"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505800_AI ML for Positioning.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505800_AI ML for Positioning.docx",
+      "file_size": 280135,
+      "mtime": 1773984054.788774,
+      "in_manifest": true,
+      "chunk_count": 25,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505800"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505829 AI812 R19_AIMLPOS_v1.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505829 AI812 R19_AIMLPOS_v1.docx",
+      "file_size": 61488,
+      "mtime": 1773984075.6467676,
+      "in_manifest": true,
+      "chunk_count": 13,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505829"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2505925.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2505925.docx",
+      "file_size": 60256,
+      "mtime": 1773984096.9471378,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2505925"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2506173_Maintenance on AI-ML-based positioning accuracy enhancement.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2506173_Maintenance on AI-ML-based positioning accuracy enhancement.docx",
+      "file_size": 167854,
+      "mtime": 1773984120.3045938,
+      "in_manifest": true,
+      "chunk_count": 13,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2506173"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2506247.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2506247.docx",
+      "file_size": 89886,
+      "mtime": 1773984150.5912368,
+      "in_manifest": true,
+      "chunk_count": 20,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2506247"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R1-2506270.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R1-2506270.docx",
+      "file_size": 141763,
+      "mtime": 1773984182.5049758,
+      "in_manifest": true,
+      "chunk_count": 24,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R1-2506270"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R2-2505702_([POST130][025][AI PHY] LPP Open issues Discussion)_v05_Rap.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R2-2505702_([POST130][025][AI PHY] LPP Open issues Discussion)_v05_Rap.docx",
+      "file_size": 109940,
+      "mtime": 1755112702.0,
+      "in_manifest": true,
+      "chunk_count": 100,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2505702"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R2-2505703_([POST130][025][AI PHY] LPP Running CR Discussion)_v08_Rap.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R2-2505703_([POST130][025][AI PHY] LPP Running CR Discussion)_v08_Rap.docx",
+      "file_size": 226832,
+      "mtime": 1755112774.0,
+      "in_manifest": true,
+      "chunk_count": 35,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2505703"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R2-2505704_(CR 37355-i50 AIML Pos).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R2-2505704_(CR 37355-i50 AIML Pos).docx",
+      "file_size": 181597,
+      "mtime": 1755111838.0,
+      "in_manifest": true,
+      "chunk_count": 103,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2505704"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R2-2506496_(CR 37355-i50 AIML Pos).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R2-2506496_(CR 37355-i50 AIML Pos).docx",
+      "file_size": 200792,
+      "mtime": 1756947424.0,
+      "in_manifest": true,
+      "chunk_count": 115,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R2-2506496"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R2_129-Positioning-Relay-2025-02-18-1040.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R2_129-Positioning-Relay-2025-02-18-1040.docx",
+      "file_size": 99583,
+      "mtime": 1773942552.8386452,
+      "in_manifest": true,
+      "chunk_count": 73,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": []
+    },
+    {
+      "rel_path": "tdocs\\R3-255372.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-255372.docx",
+      "file_size": 453493,
+      "mtime": 1755160484.0,
+      "in_manifest": true,
+      "chunk_count": 83,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-255372"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-255570 TP to NRPPa (case 3a).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-255570 TP to NRPPa (case 3a).docx",
+      "file_size": 86903,
+      "mtime": 1755171814.0,
+      "in_manifest": true,
+      "chunk_count": 16,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-255570"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-255571 SA2 LS (case 3a).docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-255571 SA2 LS (case 3a).docx",
+      "file_size": 42069,
+      "mtime": 1755171776.0,
+      "in_manifest": true,
+      "chunk_count": 13,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-255571"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-255873.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-255873.docx",
+      "file_size": 125819,
+      "mtime": 1756416650.0,
+      "in_manifest": true,
+      "chunk_count": 9,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-255873"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-258480.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-258480.docx",
+      "file_size": 69935,
+      "mtime": 1774507741.108729,
+      "in_manifest": true,
+      "chunk_count": 17,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-258480"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-260176.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-260176.docx",
+      "file_size": 38082,
+      "mtime": 1769673434.0,
+      "in_manifest": true,
+      "chunk_count": 7,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-260176"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-260177.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-260177.docx",
+      "file_size": 35545,
+      "mtime": 1769676648.0,
+      "in_manifest": true,
+      "chunk_count": 14,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-260177"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-260178.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-260178.docx",
+      "file_size": 52491,
+      "mtime": 1769676672.0,
+      "in_manifest": true,
+      "chunk_count": 18,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-260178"
+      ]
+    },
+    {
+      "rel_path": "tdocs\\R3-260356 Discussion on Exit Conditions.docx",
+      "abs_path": "D:\\vibecoding\\project1\\docs\\3gpp\\tdocs\\R3-260356 Discussion on Exit Conditions.docx",
+      "file_size": 110100,
+      "mtime": 1769702522.0,
+      "in_manifest": true,
+      "chunk_count": 8,
+      "status": "processed",
+      "reason": "ok",
+      "tdocs": [
+        "R3-260356"
+      ]
+    }
+  ],
+  "pending": [],
+  "failed": [],
+  "duplicate": [
+    {
+      "tdoc": "R2-2505704",
+      "files": [
+        "cr\\CR\\R2-2505704_(CR 37355-i50 AIML Pos).docx",
+        "tdocs\\R2-2505704_(CR 37355-i50 AIML Pos).docx"
+      ],
+      "count": 2
+    },
+    {
+      "tdoc": "R2-2506496",
+      "files": [
+        "cr\\CR\\R2-2506496_(CR 37355-i50 AIML Pos).docx",
+        "tdocs\\R2-2506496_(CR 37355-i50 AIML Pos).docx"
+      ],
+      "count": 2
+    },
+    {
+      "tdoc": "R3-260177",
+      "files": [
+        "cr\\CR\\R3-260177.docx",
+        "tdocs\\R3-260177.docx"
+      ],
+      "count": 2
+    }
+  ],
+  "suspicious": []
+}
