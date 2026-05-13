@@ -4,7 +4,7 @@ import json
 import sys
 import uuid
 from pathlib import Path
-from .config import DOCS_DIR, SUPPORTED_EXTENSIONS, CHROMA_PERSIST_DIR
+from .config import DOCS_DIR, SUPPORTED_EXTENSIONS, CHROMA_PERSIST_DIR, IGNORE_NAMES
 from .parsers.router import FileTypeRouter
 from .chunker import SemanticChunker
 from .embedder import Embedder
@@ -238,4 +238,5 @@ class IngestPipeline:
         files = []
         for ext in SUPPORTED_EXTENSIONS:
             files.extend(self.docs_dir.rglob(f"*{ext}"))
+        files = [f for f in files if f.name.lower() not in IGNORE_NAMES]
         return sorted(files)

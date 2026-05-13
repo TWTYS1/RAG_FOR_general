@@ -36,3 +36,4 @@ RERANK_MODEL = os.getenv("RERANK_MODEL", "BAAI/bge-reranker-v2-m3")
 
 # --- 支持的文件格式 ---
 SUPPORTED_EXTENSIONS = {".md", ".pdf", ".txt", ".docx", ".html", ".htm"}
+IGNORE_NAMES = {"readme.txt", "readme.md", "readme"}
