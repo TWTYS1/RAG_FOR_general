@@ -113,6 +113,7 @@ class IngestPipeline:
                     changed += 1
                     print(f"  [~] {rel} -> {chunks} chunks (recovered)")
             elif rel not in manifest:
+                self.store.remove_by_source(abs_path)  # 清掉上次崩溃可能残留的脏 chunks
                 chunks = self._process_file(file_path)
                 if chunks is not None:
                     total_chunks += chunks
@@ -149,11 +150,13 @@ class IngestPipeline:
         for file_path in files:
             rel = str(file_path.relative_to(self.docs_dir))
             mtime = file_path.stat().st_mtime
+            abs_path = str(file_path)
             if rel in manifest and abs(manifest[rel] - mtime) <= 1:
-                abs_path = str(file_path)
                 if self.store.count_by_source(abs_path) > 0:
                     continue  # 断点续跑
+                self.store.remove_by_source(abs_path)  # manifest 有但 chroma 无 → 崩溃残留
 
+            self.store.remove_by_source(abs_path)  # 清掉上次崩溃可能残留的脏 chunks
             chunks = self._process_file(file_path)
             if chunks is not None:
                 total_chunks += chunks
