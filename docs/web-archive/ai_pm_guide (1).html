@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 产品经理入行指南</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --text: #1a1814;
+    --text2: #4a4740;
+    --text3: #8a8780;
+    --accent: #1a3a5c;
+    --accent2: #2d6a9f;
+    --accent-light: #e8f0f8;
+    --teal: #0f6e56;
+    --teal-light: #e1f5ee;
+    --amber: #854f0b;
+    --amber-light: #faeeda;
+    --coral: #993c1d;
+    --coral-light: #faece7;
+    --purple: #534ab7;
+    --purple-light: #eeedfe;
+    --border: #e0ddd6;
+    --border2: #ccc9c0;
+    --tag-todo: #e74c3c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 2px solid var(--text);
+    padding-bottom: 24px;
+    margin-bottom: 48px;
+  }
+  .header-kicker {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .header-sub {
+    margin-top: 12px;
+    font-size: 14px;
+    color: var(--text2);
+  }
+  .header-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .meta-tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin-bottom: 48px;
+  }
+  .toc-title {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 12px;
+  }
+  .toc-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 24px;
+  }
+  .toc-list li a {
+    font-size: 13px;
+    color: var(--accent2);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toc-list li a:hover { text-decoration: underline; }
+  .toc-num {
+    font-size: 11px;
+    color: var(--text3);
+    min-width: 18px;
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 56px;
+    scroll-margin-top: 24px;
+  }
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--border2);
+    line-height: 1;
+    min-width: 44px;
+  }
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .section-desc {
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* CARDS GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .card-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .card p {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .card.teal { border-top: 3px solid var(--teal); }
+  .card.teal .card-label { color: var(--teal); }
+  .card.blue { border-top: 3px solid var(--accent2); }
+  .card.blue .card-label { color: var(--accent2); }
+  .card.amber { border-top: 3px solid var(--amber); }
+  .card.amber .card-label { color: var(--amber); }
+  .card.coral { border-top: 3px solid var(--coral); }
+  .card.coral .card-label { color: var(--coral); }
+  .card.purple { border-top: 3px solid var(--purple); }
+  .card.purple .card-label { color: var(--purple); }
+
+  /* JOB TYPE TABLE */
+  .job-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-bottom: 20px;
+  }
+  .job-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: var(--surface2);
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .job-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+  .job-table tr:last-child td { border-bottom: none; }
+  .job-table tr:hover td { background: var(--bg); }
+  .job-name {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 14px;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .job-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 99px;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .tag-hard { background: var(--coral-light); color: var(--coral); }
+  .tag-mid { background: var(--amber-light); color: var(--amber); }
+  .tag-entry { background: var(--teal-light); color: var(--teal); }
+
+  /* COMPARE BLOCK */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .compare-card.tob { border-top: 3px solid var(--accent); }
+  .compare-card.toc { border-top: 3px solid var(--coral); }
+  .compare-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .compare-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-key { color: var(--text3); min-width: 60px; flex-shrink: 0; }
+  .compare-val { color: var(--text); text-align: right; font-weight: 500; }
+
+  /* SKILL TAGS */
+  .skill-group { margin-bottom: 20px; }
+  .skill-group-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .skill-group-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill-tag {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+  }
+  .skill-tag.must {
+    background: var(--accent-light);
+    border-color: #b5d4f4;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .skill-tag.plus {
+    background: var(--teal-light);
+    border-color: #9fe1cb;
+    color: var(--teal);
+  }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--border2);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .tl-dot {
+    position: absolute;
+    left: -24px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border2);
+  }
+  .tl-dot.active {
+    background: var(--accent2);
+    border-color: var(--accent2);
+  }
+  .tl-dot.warn {
+    background: var(--amber);
+    border-color: var(--amber);
+  }
+  .tl-time {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .tl-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .tl-body {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.65;
+  }
+  .tl-body ul {
+    padding-left: 16px;
+    margin-top: 4px;
+  }
+  .tl-body li { margin-bottom: 3px; }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+  }
+  .callout.info { background: var(--accent-light); border-left: 3px solid var(--accent2); color: #0c447c; }
+  .callout.warn { background: var(--amber-light); border-left: 3px solid var(--amber); color: var(--amber); }
+  .callout.success { background: var(--teal-light); border-left: 3px solid var(--teal); color: var(--teal); }
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .callout strong { font-weight: 700; }
+
+  /* PROSE */
+  .prose { font-size: 14.5px; color: var(--text2); line-height: 1.85; }
+  .prose p { margin-bottom: 12px; }
+  .prose strong { color: var(--text); font-weight: 700; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text3);
+  }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* SMALL TABLE for FAQ */
+  .faq-item { margin-bottom: 20px; }
+  .faq-q {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .faq-q-tag {
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--surface2);
+    color: var(--text3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .faq-a { font-size: 13.5px; color: var(--text2); padding-left: 16px; border-left: 2px solid var(--border); line-height: 1.7; }
+
+  @media (max-width: 600px) {
+    .toc-list { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-kicker">内部咨询参考文档 · 2026</div>
+    <h1>AI 产品经理<br>入行全景指南</h1>
+    <div class="header-sub">写给即将进入 AI 行业的产品新人 · 覆盖行业背景 / 岗位认知 / 能力路径 / 暑期实习准备</div>
+    <div class="header-meta">
+      <span class="meta-tag">行业背景</span>
+      <span class="meta-tag">岗位分类</span>
+      <span class="meta-tag">ToB vs ToC</span>
+      <span class="meta-tag">能力要求</span>
+      <span class="meta-tag">暑期 Todo</span>
+    </div>
+  </div>
+
+  <!-- SPEAKER CARD -->
+  <div style="background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); border-radius: 16px; padding: 2px; margin-bottom: 40px; box-shadow: 0 4px 20px rgba(26, 58, 92, 0.15);">
+    <div style="background: var(--surface); border-radius: 14px; padding: 28px 32px; display: flex; gap: 24px; align-items: flex-start;">
+      <!-- Avatar -->
+      <div style="width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-light) 0%, #d0e7f7 100%); border: 3px solid var(--surface); box-shadow: 0 4px 12px rgba(26, 58, 92, 0.2); display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0;">👤</div>
+      <!-- Content -->
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px;">讲师背景</div>
+        <div style="font-size: 17px; font-weight: 600; margin-bottom: 20px; color: var(--text);">本硕计算机 · VLM 方向 · 现任 AI 产品经理</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <!-- 学历 -->
+          <div style="background: linear-gradient(135deg, var(--accent-light) 0%, #f0f7fc 100%); border-radius: 10px; padding: 14px 16px; border-left: 3px solid var(--accent2);">
+            <div style="font-size: 10px; color: var(--accent); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">学历</div>
+            <div style="color: var(--text2); line-height: 1.7; font-size: 13px;">四非本科 · 电子科技大学硕士<br><span style="font-size: 11px; color: var(--teal); background: var(--teal-light); padding: 2px 8px; border-radius: 99px; font-weight: 500;">技术背景非常适合转行 AI 产品</span></div>
+          </div>
+          <!-- 实习 -->
+          <div style="background: linear-gradient(135deg, var(--teal-light) 0%, #f0fcf9 100%); border-radius: 10px; padding: 14px 16px; border-left: 3px solid var(--teal);">
+            <div style="font-size: 10px; color: var(--teal); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">实习经历</div>
+            <div style="color: var(--text2); line-height: 1.7; font-size: 13px;">研一下：好未来科技 <span style="font-size: 11px; color: var(--accent2);">ToC</span><br>研二–研三：考拉悠然 AI <span style="font-size: 11px; color: var(--amber);">ToB</span></div>
+          </div>
+          <!-- Offer -->
+          <div style="background: linear-gradient(135deg, var(--coral-light) 0%, #fcf5f2 100%); border-radius: 10px; padding: 14px 16px; border-left: 3px solid var(--coral);">
+            <div style="font-size: 10px; color: var(--coral); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">秋招 Offer</div>
+            <div style="color: var(--text2); line-height: 1.8; font-size: 13px;">互联网中厂 <strong>40w</strong> · 国企网络（海外 AI PM）<strong>35w</strong><br>国企汽车 <strong>15w</strong> · 北京私企 <strong>25w</strong></div>
+          </div>
+          <!-- 2026行情 -->
+          <div style="background: linear-gradient(135deg, #fff9ed 0%, #fff 100%); border-radius: 10px; padding: 14px 16px; border-left: 3px solid var(--amber);">
+            <div style="font-size: 10px; color: var(--amber); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">2026 行情参考</div>
+            <div style="color: var(--text2); line-height: 1.7; font-size: 12px;">15–25w / <strong>25–35w</strong> / 35–40w / 40–50w（toop/小红书/阿里）<br><span style="color: var(--accent2);">offershow 可查各家薪资</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">目录</div>
+    <ul class="toc-list">
+      <li><a href="#s1"><span class="toc-num">01</span>行业背景与现在的机会</a></li>
+      <li><a href="#s2"><span class="toc-num">02</span>AI PM 岗位全景分类</a></li>
+      <li><a href="#s3"><span class="toc-num">03</span>ToB vs ToC 深度差异</a></li>
+      <li><a href="#s4"><span class="toc-num">04</span>核心能力图谱</a></li>
+      <li><a href="#s5"><span class="toc-num">05</span>暑期实习 Todo 清单</a></li>
+      <li><a href="#s6"><span class="toc-num">06</span>常见误区 &amp; FAQ</a></li>
+    </ul>
+  </div>
+
+  <!-- SECTION 1: 行业背景 -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div>
+        <div class="section-title">行业背景：2026 年，你在浪的哪个位置</div>
+        <div class="section-desc">不是在等风来，风已经来过一轮了</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>2023 年 ChatGPT 出现，2024 年 RAG + 基础 Agent 铺开，2025 年多模态 Agent 和 Agent 平台化爆发，<strong>2026 年行业已经进入复杂 Agent 时代</strong>。Manus、Claude Code、Devin 这类能自主完成多步复杂任务的产品已经是标配，「AI 帮你写一段文案」这种用法早就不够看了。</p>
+      <p>现在行业真正在讨论的是三件事：<strong>Complex Agent</strong>（多步骤、多工具、自主规划的智能体）、<strong>Context Engineering</strong>（如何精细设计 AI 接收的上下文，决定它能不能真正理解任务）、<strong>Harness Engineering</strong>（如何搭建测试框架、Eval 流水线、沙箱环境，让 Agent 可靠地大规模运行）。这三个词不会在面试里必考，但如果你能聊清楚，面试官会直接刮目相看。</p>
+      <p>对入行新人的影响：<strong>门槛比 2023 年高了不止一个量级</strong>，但对有计算机背景的同学是利好——纯业务 PM 愈发难做 AI 产品，技术背景理解 Agent 架构、Eval 设计的壁垒，越来越值钱。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card teal">
+        <div class="card-label">2026 核心趋势</div>
+        <h3>Complex Agent 时代</h3>
+        <p>单轮问答已经是基础功能。主流产品在做的是：多步规划、跨工具调用、长时间任务自主执行，错误自我修复。PM 要能设计 Agent 的 Fallback 机制和边界处理。</p>
+      </div>
+      <div class="card blue">
+        <div class="card-label">新兴关键词</div>
+        <h3>Context Engineering</h3>
+        <p>「给 AI 什么信息、怎么给、给多少」已经成为专门的工程领域。PM 需要理解 System Prompt 设计、Memory 分层、上下文压缩策略对产品效果的直接影响。</p>
+      </div>
+      <div class="card amber">
+        <div class="card-label">可靠性要求</div>
+        <h3>Harness Engineering</h3>
+        <p>Agent 规模化落地的核心挑战：如何让它稳定、可测试、可回滚。Eval pipeline、沙箱隔离、异常监控——这些原本是工程师的事，PM 现在也要参与设计。</p>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">💡</span>
+      <div><strong>2026 年的门槛分水岭：</strong>会用 AI 工具 ≠ 能做 AI 产品。现在的要求是——你能不能<strong>独立设计一个 Agent 的完整行为边界</strong>，包括它什么时候该停、什么时候该问人、出错了怎么兜底。这套思维，是 AI PM 和传统 PM 最本质的差距。</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: 岗位分类 -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div>
+        <div class="section-title">AI PM 岗位全景分类</div>
+        <div class="section-desc">从 Agent 到具身智能，你在哪个赛道上？</div>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-bottom: 20px;">
+      <p><strong>先说薪资：</strong>2026 年 AI 产品岗位的应届生薪资普遍在 <strong>15k–25k</strong> 之间，对比传统互联网产品岗位确实可观。头部大厂（字节/阿里/腾讯）可达 25–35k，顶尖 offer 能到 40w+ 年包。</p>
+      <p style="margin-top: 10px;">AI 产品方向的岗位名称五花八门，新人容易搞混。按<strong>入门难度从低到高</strong>排序，大致可以分为以下几类：</p>
+    </div>
+
+    <table class="job-table">
+      <thead>
+        <tr>
+          <th style="width: 160px;">岗位类型</th>
+          <th>核心工作内容</th>
+          <th style="width: 130px;">技术要求</th>
+          <th style="width: 110px;">适合路径</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="job-name">AI 模型运营 / 数据运营</span>
+            <span class="job-tag tag-entry">门槛最低 · 推荐新人</span>
+          </td>
+          <td>负责模型效果的持续优化，包括：数据标注质量管理、SFT 数据收集策略、RLHF 人类反馈收集、模型上线后的 Bad Case 分析与迭代。</td>
+          <td>理解数据标注流程、评测指标（ROUGE/BLEU/人工打分）、基础统计</td>
+          <td>对模型感兴趣但技术背景一般的同学的好选择</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="job-name">AI 应用产品经理</span>
+            <span class="job-tag tag-entry">最常见入口</span>
+          </td>
+          <td>基于现有大模型（GPT/Claude/自研）设计具体应用产品，如 AI 写作、AI 客服、AI 搜索。核心是场景挖掘 + Prompt 设计 + 交互体验。</td>
+          <td>理解 Prompt Engineering、基础 RAG 概念、API 调用逻辑即可</td>
+          <td>传统 PM 转型首选，实习生主流岗位</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="job-name">RAG 产品 / 知识库产品</span>
+            <span class="job-tag tag-mid">B端核心</span>
+          </td>
+          <td>基于 RAG（检索增强生成）架构做企业知识库、文档问答、私有数据 AI 化。核心问题：召回质量、分块策略、上下文拼接、幻觉控制。</td>
+          <td>理解 Embedding、向量数据库（Milvus/Pinecone）、Reranker、Chunking 策略</td>
+          <td>企业服务/SaaS 公司的主流 AI 产品方向</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="job-name">Agent 产品经理</span>
+            <span class="job-tag tag-mid">当前热门</span>
+          </td>
+          <td>设计能自主规划 + 执行任务的 AI Agent 产品，如 Manus、Devin、Cursor。需要设计任务分解逻辑、Tool Calling 策略、多 Agent 协作架构、异常处理机制。</td>
+          <td>理解 ReAct 框架、Function Calling、Memory 机制、Workflow 编排</td>
+          <td>2026 年最火赛道，技术 PM 优势明显</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="job-name">模型产品经理</span>
+            <span class="job-tag tag-hard">门槛较高</span>
+          </td>
+          <td>为大模型本身做产品设计，包括：模型能力规划（推理/代码/多模态）、模型 API 产品化、Benchmark 定义、模型评测体系设计。</td>
+          <td>需要深入理解模型训练流程、RLHF、Tokenizer、Eval 体系，最好有 NLP 背景</td>
+          <td>研究院/大厂模型团队，需要技术或研究背景</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="job-name">具身智能产品经理</span>
+            <span class="job-tag tag-hard">早期阶段</span>
+          </td>
+          <td>为机器人/物理 AI 做产品设计，如智能家居机器人、工业机器人、自动驾驶场景下的产品。需要理解感知-规划-执行全链路。</td>
+          <td>需要机器人学、计算机视觉、传感器融合背景，门槛极高</td>
+          <td>仍在早期，建议先打好 AI PM 基础再考虑</td>
+        </tr>
+        <tr>
+          <td>
+            <span class="job-name">世界模型 / 多模态产品</span>
+            <span class="job-tag tag-hard">前沿研究向</span>
+          </td>
+          <td>围绕视频生成、3D 理解、世界模型（如 Sora 类产品）做产品化设计。更接近研究院产品方向，少量大厂设置此类岗位。</td>
+          <td>多模态模型原理、Video Generation、3D 重建基础知识</td>
+          <td>OpenAI/Pika/Kling 等，暂时不是普通实习生目标</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout success">
+      <span class="callout-icon">✅</span>
+      <div><strong>新人建议：</strong>优先瞄准「AI 应用产品经理」和「Agent 产品经理」的实习机会，这两个方向门槛相对友好，成长速度快，且和主流市场需求吻合。RAG 方向在 ToB 公司大量开放实习。</div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: ToB vs ToC -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div>
+        <div class="section-title">ToB vs ToC：两种截然不同的 AI 产品世界</div>
+        <div class="section-desc">选错方向会浪费大量时间，先搞清楚你适合哪个</div>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-bottom: 24px;">
+      <p><strong>ToB 业务到底在做什么？</strong>一句话：把 AI 能力嵌入企业的日常工作流程，让公司花更少人力、出更少错误、跑得更快。企业买 AI 产品的核心逻辑只有一条——<strong>ROI（投入产出比）</strong>，能省多少钱、能提升多少效率，必须算得清楚。</p>
+      <p>ToB AI 产品一般覆盖这几类场景：</p>
+    </div>
+
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 24px;">
+      <div class="card blue">
+        <div class="card-label">客服 / 支持</div>
+        <h3>AI 客服 & 坐席助手</h3>
+        <p>替代或辅助人工客服，自动回答常见问题、总结对话、生成工单。金融、电商、运营商是主战场。核心难点：意图识别准确率、拒识策略、人机协作切换时机。</p>
+      </div>
+      <div class="card teal">
+        <div class="card-label">知识管理</div>
+        <h3>企业知识库 & 文档问答</h3>
+        <p>把企业内部文档（手册、合同、政策）向量化，员工用自然语言提问即可得到准确答案。典型产品：飞书 AI 知识库、印象笔记 AI。核心难点：RAG 召回质量、幻觉控制。</p>
+      </div>
+      <div class="card amber">
+        <div class="card-label">销售 / 营销</div>
+        <h3>销售 Copilot & 营销自动化</h3>
+        <p>帮销售自动写跟进邮件、总结客户画像、生成话术建议；帮市场批量生成物料、A/B 测试文案。典型：Salesforce Einstein、飞书销售助手。</p>
+      </div>
+      <div class="card coral">
+        <div class="card-label">法务 / 合规</div>
+        <h3>AI 合同审查 & 风险识别</h3>
+        <p>自动扫描合同条款、标记风险点、生成审查报告。律所和大型企业法务部门是核心买家。准确率要求极高，错漏成本直接是法律风险。</p>
+      </div>
+      <div class="card purple">
+        <div class="card-label">人力资源</div>
+        <h3>AI 招聘 & HR Copilot</h3>
+        <p>简历筛选、面试题生成、入职材料自动化、员工问答机器人。HR 场景数据敏感，隐私合规是重要设计约束。</p>
+      </div>
+      <div class="card blue" style="border-top-color: #854f0b;">
+        <div class="card-label" style="color: #854f0b;">数据分析</div>
+        <h3>Text-to-SQL & 数据 Copilot</h3>
+        <p>业务人员用自然语言提问，AI 自动生成 SQL 查询并返回图表。让非技术人员也能自助分析数据，减少对数据团队的依赖。</p>
+      </div>
+    </div>
+
+    <div class="callout info" style="margin-bottom: 24px;">
+      <span class="callout-icon">🏗</span>
+      <div><strong>ToB AI 产品的典型交付形式：</strong>SaaS 订阅（最轻）→ API 接入（中间层）→ 私有化部署（最重，金融/医疗/政府必选）。PM 需要理解不同部署形式对产品架构、数据隔离、运维成本的影响。</div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-card tob">
+        <h3>🏢 ToB AI 产品</h3>
+        <div class="compare-row"><span class="compare-key">代表公司</span><span class="compare-val">字节飞书、钉钉、百度智能云、阿里云、MiniMax</span></div>
+        <div class="compare-row"><span class="compare-key">典型产品</span><span class="compare-val">AI 客服、企业知识库、AI 合同审查、销售 Copilot、Text-to-SQL</span></div>
+        <div class="compare-row"><span class="compare-key">用户决策</span><span class="compare-val">采购由决策层 / IT 主导，周期 3–12 个月，签单后才能用</span></div>
+        <div class="compare-row"><span class="compare-key">成功标准</span><span class="compare-val">ROI 可量化：人力成本下降 X%、处理效率提升 X 倍</span></div>
+        <div class="compare-row"><span class="compare-key">PM 核心能力</span><span class="compare-val">行业流程理解 + 方案抽象 + 技术落地 + 客户沟通</span></div>
+        <div class="compare-row"><span class="compare-key">数据特点</span><span class="compare-val">私有数据为主，私有化部署常见，RAG 是标配能力</span></div>
+        <div class="compare-row"><span class="compare-key">新人难度</span><span class="compare-val">需深入理解某一行业（金融/医疗/制造），壁垒高回报高</span></div>
+      </div>
+      <div class="compare-card toc">
+        <h3>📱 ToC AI 产品</h3>
+        <div class="compare-row"><span class="compare-key">代表产品</span><span class="compare-val">Claude / Gemini / ChatGPT（通用助手）<br>Kimi / 豆包（国内 C 端）<br>Claude Code / Cursor（开发者工具）<br>阿里阿福医生（垂直 C 端）</span></div>
+        <div class="compare-row"><span class="compare-key">典型方向</span><span class="compare-val">AI 对话助手、AI 编程工具、垂直场景助手（医疗/教育/法律）、AI 搜索</span></div>
+        <div class="compare-row"><span class="compare-key">用户决策</span><span class="compare-val">个人用户随时决策，留存 / 次日留存是核心指标</span></div>
+        <div class="compare-row"><span class="compare-key">成功标准</span><span class="compare-val">DAU、Retention、感知体验，「哇」的瞬间驱动传播</span></div>
+        <div class="compare-row"><span class="compare-key">PM 核心能力</span><span class="compare-val">用户洞察 + 交互体验 + 增长思维</span></div>
+        <div class="compare-row"><span class="compare-key">数据特点</span><span class="compare-val">公域数据为主，大模型直接调用，Prompt 优化是关键</span></div>
+        <div class="compare-row"><span class="compare-key">新人难度</span><span class="compare-val">入门相对快，但竞争激烈，产品直觉和审美很关键</span></div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠️</span>
+      <div><strong>关键差异总结：</strong>ToB 的 AI PM 更像「方案设计师」——理解客户流程，把 AI 嵌进去；ToC 的 AI PM 更像「体验设计师」——让每个用户都感受到 AI 带来的「超预期」。两者对 AI 技术的理解深度要求相近，但场景思维差异很大。</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: 能力图谱 -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div>
+        <div class="section-title">AI PM 核心能力图谱</div>
+        <div class="section-desc">哪些是必须有，哪些是加分项</div>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">基础能力（必须达标）</div>
+      <div class="skill-tags">
+        <span class="skill-tag must">需求分析 & 文档撰写</span>
+        <span class="skill-tag must">用户调研与访谈</span>
+        <span class="skill-tag must">数据分析思维</span>
+        <span class="skill-tag must">产品逻辑与流程图</span>
+        <span class="skill-tag must">Prompt Engineering 基础</span>
+        <span class="skill-tag must">LLM 基础原理认知</span>
+        <span class="skill-tag must">表达与沟通协作</span>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title">AI 技术理解（差异化竞争力）—— 点击展开了解</div>
+      <div id="tech-cards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 4px;">
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">RAG</span>
+            <span class="tech-tag">检索增强生成</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">把外部文档切片存入向量数据库，用户提问时先检索相关片段再交给大模型生成回答。解决模型「不知道你公司内部信息」的问题。ToB 知识库产品的核心架构，<strong>必须搞懂</strong>。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Agent</span>
+            <span class="tech-tag">智能体</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">2026 年已是 Complex Agent 主流时代。Agent 不只回答问题，而是自主拆解任务、调用工具（搜索/代码/API/浏览器）、多步执行、自我纠错直到完成目标。Manus、Cursor、Claude Code 都是典型产品。PM 核心工作是设计 Agent 的边界：<strong>什么时候停、什么时候问人、失败了怎么兜底。</strong></div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Function Calling</span>
+            <span class="tech-tag">工具调用</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">大模型识别到用户意图后，输出结构化的函数调用指令（而不是纯文字），外部系统执行函数并把结果返回给模型。Agent 能调用真实工具的基础能力。PM 需要理解它的触发逻辑和异常处理。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Fine-tuning</span>
+            <span class="tech-tag">微调</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">用特定领域的数据对预训练模型进行二次训练，让模型更擅长某类任务（如法律文书、医疗诊断）。成本比训练基础模型低很多，但仍需大量标注数据。区分「什么时候该微调 vs 用 RAG」是 PM 常见判断题。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">向量数据库</span>
+            <span class="tech-tag">Vector DB</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">把文本/图片转成高维数字向量存储，支持「语义相似度」检索（不是关键词匹配）。RAG 的底层存储层，常见产品有 Pinecone、Milvus、Chroma。PM 需要理解它与传统数据库的核心差异。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Prompt / Context Engineering</span>
+            <span class="tech-tag">2026 核心技能</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">Prompt Engineering 是基础——设计 System Prompt、Few-shot 示例、思维链引导。2026 年更进一步的是 <strong>Context Engineering</strong>：精细设计 AI 完整输入的上下文，包括记忆结构、工具文档、历史对话压缩策略，决定 Agent 能不能真正理解任务。这已经是专门的工程领域，<strong>AI PM 必须深度掌握。</strong></div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Eval / 评测体系</span>
+            <span class="tech-tag">模型评估</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">系统性衡量 AI 输出质量的方法，包括自动化指标（ROUGE、准确率）和人工评测（打分、对比）。PM 负责定义「什么是好的输出」，并推动工程团队建立 Eval pipeline，是推动模型持续优化的关键。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Harness Engineering</span>
+            <span class="tech-tag">2026 新兴必知</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">让 Agent 可以大规模、可靠地运行的工程体系：Eval 自动化流水线、沙箱隔离环境、异常监控 + 回滚机制、任务执行日志追踪。2026 年 Agent 落地的核心挑战不是「能不能做到」，而是「<strong>能不能稳定、可测试地做到</strong>」。PM 不需要自己搭，但必须理解它为什么重要，才能和工程团队有效对齐。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">多模态</span>
+            <span class="tech-tag">Multimodal</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">模型能同时理解和生成文字、图片、音频、视频等多种形式的内容。GPT-4o、Gemini 1.5 是典型多模态模型。PM 需要理解不同模态能力的边界，以及产品中何时需要引入多模态。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Workflow 编排</span>
+            <span class="tech-tag">流程自动化</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">把多个 AI 调用 + 外部工具串联成一个自动化流程，如「邮件进来 → AI 分类 → 调用 CRM 查客户 → 生成回复草稿 → 发送」。Dify、n8n、Coze 是主流编排平台。PM 设计这类产品需要流程图思维。</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="skill-group" style="margin-top: 28px;">
+      <div class="skill-group-title">工具能力（亲手用过才算数）—— 点击展开了解</div>
+      <div id="tool-cards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 4px;">
+
+        <!-- 设计 & 原型 -->
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Figma</span>
+            <span class="tech-tag">设计原型</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">行业标准原型工具，做线框图/交互稿，国际通用，AI PM 必会。免费版足够学生使用，重点掌握：Frame、Auto Layout、Components、Prototype 连线。面试带上作品集链接是加分项。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Pixso</span>
+            <span class="tech-tag">设计原型</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">国产 Figma 替代，国内团队常用，支持中文协作，功能基本对齐。优势是服务器在国内，访问更稳定。适合不想折腾 Figma 网络问题的同学。</div>
+        </div>
+
+        <!-- AI 编程工具 -->
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Cursor</span>
+            <span class="tech-tag">AI 编程</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">AI 代码编辑器（基于 VSCode），能用自然语言写代码/改 Bug，PM 用来做 Demo 项目首选。优势是理解整个项目上下文，不是单次问答。新手能用它做出真实可运行的小项目。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Claude Code</span>
+            <span class="tech-tag">AI 编程</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">Anthropic 官方 CLI 编程助手，终端直接调用，支持复杂代码库理解。适合需要在命令行工作的场景，能直接操作文件、运行命令、调试代码。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Trae</span>
+            <span class="tech-tag">AI 编程</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">字节跳动出品 AI IDE，新人搭个人主页/小项目的低门槛选择。特点是对中文支持好，模板丰富，适合零基础快速出成果。用它做的项目可以直接部署到 GitHub Pages。</div>
+        </div>
+
+        <!-- AI 模型 & 助手 -->
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Claude</span>
+            <span class="tech-tag">AI 助手</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">Anthropic 出品，长文本理解 + 写作分析能力强，PM 日常必用。优势是 200k token 上下文窗口，能处理长文档；输出质量稳定，适合做产品分析、写文档、设计 Prompt。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Gemini</span>
+            <span class="tech-tag">AI 助手</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">Google 出品，多模态能力突出，与 Google Workspace 深度集成。适合处理图片、PDF、长文档。Gemini 2.0 的 Flash 模式响应速度快，适合快速探索想法。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Manus</span>
+            <span class="tech-tag">AI 助手</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">国内 AI Agent 产品，自主完成多步任务，体验它来理解 Agent 产品形态。用它做几个真实任务（整理文件、写报告、查资料），能帮你建立对 Agent 能力的第一手认知。</div>
+        </div>
+
+        <!-- 其他基础工具 -->
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Dify / Coze</span>
+            <span class="tech-tag">低代码平台</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">AI 应用低代码搭建平台。Dify 开源可私有部署，Coze 字节出品更易用。适合快速搭建 AI 助手原型，支持接入微信、飞书等渠道。PM 用来验证想法非常高效。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Python 基础</span>
+            <span class="tech-tag">编程能力</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">不需要成为工程师，但要能看懂代码、调 API、写简单脚本。重点掌握：变量、函数、列表/字典、基础 IO。能用 Python 调用 OpenAI/Claude API 做小工具是加分项。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">SQL 基础</span>
+            <span class="tech-tag">数据查询</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+          <div class="tech-body">基础查询能力即可：SELECT、WHERE、GROUP BY、JOIN。PM 常用它从数据库拉数据做分析、验证产品假设。不需要懂复杂优化，能写出正确的查询逻辑就行。</div>
+        </div>
+
+        <div class="tech-card" onclick="toggleTech(this)">
+          <div class="tech-header">
+            <span class="tech-name">Notion / 飞书</span>
+            <span class="tech-tag">文档协作</span>
+            <span class="tech-arrow">▸</span>
+          </div>
+            <div class="tech-body">文档和知识管理工具。Notion 国际化团队常用，飞书国内更普及。PM 的日常：写 PRD、记录会议、整理需求池、做产品 Roadmap。熟练使用能大幅提升工作效率。</div>
+        </div>
+
+      </div>
+    </div>
+
+    <style>
+      .tech-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.15s;
+      }
+      .tech-card:hover { border-color: var(--border2); }
+      .tech-card.open { border-color: var(--accent2); }
+      .tech-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+      }
+      .tech-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
+        flex: 1;
+      }
+      .tech-tag {
+        font-size: 10px;
+        padding: 2px 7px;
+        background: var(--surface2);
+        color: var(--text3);
+        border-radius: 99px;
+        white-space: nowrap;
+      }
+      .tech-arrow {
+        font-size: 11px;
+        color: var(--text3);
+        transition: transform 0.2s;
+        flex-shrink: 0;
+      }
+      .tech-card.open .tech-arrow { transform: rotate(90deg); }
+      .tech-body {
+        display: none;
+        padding: 0 12px 12px;
+        font-size: 12.5px;
+        color: var(--text2);
+        line-height: 1.65;
+        border-top: 1px solid var(--border);
+        padding-top: 10px;
+      }
+      .tech-card.open .tech-body { display: block; }
+      .tech-body strong { color: var(--text); }
+    </style>
+    <script>
+      function toggleTech(el) {
+        el.classList.toggle('open');
+      }
+    </script>
+
+    <div class="divider"></div>
+
+    <div class="divider"></div>
+    <div style="margin-bottom: 10px; font-size: 13px; font-weight: 500; color: var(--text2);">关于「要不要做 Demo」——必须做，按难度选一个路径：</div>
+    <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px;">
+      <div class="card teal">
+        <div class="card-label">入门 · 推荐</div>
+        <h3>Claude 轻量搭建</h3>
+        <p>用 Claude 设计 Prompt + 对话流程，截图录屏展示交互逻辑。零代码，1 天可完成，重点展示产品思路而非技术实现。</p>
+      </div>
+      <div class="card blue">
+        <div class="card-label">进阶 · 有亮点</div>
+        <h3>Trae 做个人主页</h3>
+        <p>用字节 Trae（AI IDE）让 AI 写一个个人简历网站，部署到 GitHub Pages。不需要前端基础，过程本身就是 AI 编程工具的第一手体验，面试时有话讲。</p>
+      </div>
+      <div class="card amber">
+        <div class="card-label">高阶 · 强加分</div>
+        <h3>Cursor / Claude Code</h3>
+        <p>做一个真实可运行的小项目（RAG 问答 / Agent 工具）。门槛较高，但完成后直接证明你具备技术协作能力，是 AI PM 里的稀缺素质。</p>
+      </div>
+    </div>
+    <div class="callout info">
+      <span class="callout-icon">📌</span>
+      <div><strong>核心原则：</strong>工具必须亲手用过，不能只看别人演示。哪怕 Trae 做出来的网页很简陋，面试时说「我用 Trae 自己搭了个人主页，踩了这几个坑」——比背 10 篇 AI 文章更有说服力。<strong>亲手用过 &gt; 看过 &gt; 听说过。</strong></div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: 暑期实习 Todo -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div>
+        <div class="section-title">暑期实习 Todo 清单</div>
+        <div class="section-desc">按时间顺序规划，别到 5 月才开始</div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⏰</span>
+      <div><strong>时间节奏提醒：</strong>大厂暑期实习（字节/阿里/腾讯/百度）<strong>3 月底–4 月中</strong>基本截止投递，AI 创业公司相对灵活但好坑也在 4–5 月被扫光。现在就要动起来了。</div>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot active"></div>
+        <div class="tl-time">第一步（现在就要做）</div>
+        <div class="tl-title">把 AI 工具真正用起来</div>
+        <div class="tl-body">
+          <p>不是「注册一下试试」，而是高频深度使用，形成真实感受：</p>
+          <ul>
+            <li>用 <strong>Claude / ChatGPT / Gemini</strong> 做真实工作（写报告、做分析、整理笔记），感受能力边界和失败场景</li>
+            <li>用 <strong>Kimi / 豆包</strong> 体验国内产品的设计取舍，和国际版对比，想清楚为什么不一样</li>
+            <li>试用 <strong>Claude Code 或 Cursor</strong> 完成一个小任务（哪怕让它帮你写个脚本），感受 AI 编程工具和普通聊天的差异</li>
+            <li>用 <strong>Trae</strong> 搭一个个人简历网页——不要求好看，要求你亲手做完整个过程</li>
+            <li>关注行业动向：订阅「AI 产品新知」「硅星人」「量子位」，每天 10 分钟刷行业信息，能独立讲清楚最近 2–3 个 AI 产品热点</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot active"></div>
+        <div class="tl-time">第二步（同步进行）</div>
+        <div class="tl-title">用 AI 经验包装简历</div>
+        <div class="tl-body">
+          <p>你大概率没有「正式 AI 产品经历」，但这不是问题——关键是把现有经历重新包装，让面试官感受到你的 AI 思维：</p>
+          <ul>
+            <li><strong>挖掘已有项目里的 AI 视角：</strong>做过用户调研？写成「验证 AI 功能需求的用户访谈」。写过分析报告？加一句「运用 AI 工具提升效率 40%」。做过运营活动？提炼「数据驱动 + AI 辅助决策」的逻辑</li>
+            <li><strong>补充一个真实的 AI 实践项目：</strong>用上一步做的 Demo 或 Trae 主页，写成简历项目条目——「独立完成 XX AI 工具的产品设计与原型验证，核心功能为…」</li>
+            <li><strong>简历措辞：</strong>主动用「Prompt 设计」「AI 产品体验评测」「LLM 应用场景探索」等关键词，这些词在 JD 里高频出现</li>
+            <li>简历不超过 1 页，项目部分每条都要有动词 + 数字 + 结果，不要堆职责描述</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot active"></div>
+        <div class="tl-time">第三步</div>
+        <div class="tl-title">投递 + 面试准备</div>
+        <div class="tl-body">
+          <ul>
+            <li>大厂走校招系统，AI 创业公司直接 Boss直聘 / 脉脉私信 HR 或 PM，附上简历+一句话说清「我为什么适合这个岗位」</li>
+            <li>准备 3 分钟自我介绍，必须包含：你用过哪些 AI 产品、你做过什么和 AI 有关的事、你为什么想做 AI PM</li>
+            <li>准备面试高频题：「说一个你觉得体验不好的 AI 产品，你会怎么改」「你理解的 RAG 是什么，举一个场景」「如果让你设计一个 AI 功能，你从哪里开始」</li>
+            <li>找一个有 AI 行业经验的人做一次模拟面试，比自己背题有效 10 倍</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot warn"></div>
+        <div class="tl-time">关于两段实习叠加</div>
+        <div class="tl-title">专注 &gt; 叠加，质量比数量重要</div>
+        <div class="tl-body">
+          <p>第一次实习强烈建议专注一段。AI PM 实习的真正价值不是「完成工作量」，而是深度参与一个产品的完整迭代周期，这需要你全身心沉进去。分心叠加反而两段都浮浅，面试时也说不出有深度的东西。</p>
+          <p style="margin-top: 8px;">实习结束后有剩余时间，再考虑第二段或延期转正。时间安排上确实冲突，果断放弃节奏更差的那段——机会还会有，第一段留下好口碑才是关键。</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION 6: FAQ -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div>
+        <div class="section-title">常见误区 & FAQ</div>
+        <div class="section-desc">新人最容易踩的坑</div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span class="faq-q-tag">误区</span>
+        我没有技术背景，AI PM 是不是没戏？
+      </div>
+      <div class="faq-a">不是。AI PM 不需要你会写模型代码，但需要你「理解技术边界」——知道哪些事 AI 能做、做到什么程度、为什么失败。这部分通过 3–6 个月的主动学习完全可以达到工作水准。关键是要有主动学习的意愿，而不是等别人教。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span class="faq-q-tag">误区</span>
+        AI PM 是不是要选头部大厂才值？
+      </div>
+      <div class="faq-a">不一定。AI 创业公司（30–200人规模）往往能给你更大的产品责任、更快的迭代节奏、更直接的用户反馈。大厂胜在品牌背书和系统化培训。建议：如果有腰部到头部的 AI 创业公司 offer（如 MiniMax、月之暗面、智谱等），不一定比字节的实习差。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span class="faq-q-tag">建议</span>
+        暑期实习选 ToB 还是 ToC？
+      </div>
+      <div class="faq-a">取决于你的长期方向。如果你对「用户体验 / C 端增长 / 消费者洞察」感兴趣——去 ToC；如果你对「行业理解 / 企业数字化 / 解决方案架构」感兴趣——去 ToB。两个方向都不要只图「听起来好听的名字」，要看自己做起来哪个更有劲。不确定的话，第一段实习选 ToC，因为体感更直接，更容易建立对 AI 产品的基础感觉。</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">
+        <span class="faq-q-tag">建议</span>
+        准备阶段绝对不能忽略的事
+      </div>
+      <div class="faq-a">
+        <strong>① 持续体验 AI 产品</strong>——每周至少深度体验 1 个 AI 产品并写 200 字感想，积累到面试时能随口讲出 5–6 个有见解的案例。<br>
+        <strong>② 建立你的「AI 信息流」</strong>——关注：AI 产品 Daily（公众号）/ 硅星人 / 36氪 AI 板块 / Twitter 的 AI KOL，保持每日信息摄入。<br>
+        <strong>③ 做真实的事情</strong>——哪怕用 Dify 做一个自用的 AI 助手，也比读 10 篇文章更有价值。<strong>Doing > Reading。</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    本文档为内部参考咨询材料 · 基于 2026 年 AI 行业现状整理 · Complex Agent / Context Engineering / Harness Engineering 时代 · 建议每季度更新认知
+  </div>
+
+</div>
+</body>
+</html>

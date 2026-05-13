@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 系统 — 测试用例与验证计划</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #fff; --text: #2c3e50; --muted: #6c757d;
+    --accent: #2563eb; --accent2: #7c3aed; --border: #e2e8f0;
+    --pass: #16a34a; --fail: #dc2626; --warn: #d97706;
+    --code-bg: #1e293b; --code-text: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.75; padding: 2rem;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; padding: 2.5rem 2.5rem; border-radius: 16px; margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(37,99,235,.18);
+  }
+  .hero h1 { font-size: 2rem; margin-bottom: .4rem; }
+  .hero .sub { opacity: .9; font-size: 1rem; }
+
+  section {
+    background: var(--card); border-radius: 12px; padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem; border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  }
+  h2 { font-size: 1.3rem; margin-bottom: 1rem; border-bottom: 2px solid var(--accent); padding-bottom: .5rem; display: inline-block; }
+  h3 { font-size: 1.05rem; margin: 1.5rem 0 .6rem; color: var(--accent); }
+  h4 { font-size: .95rem; margin: 1rem 0 .4rem; }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .88rem; }
+  th { background: #eef2ff; text-align: left; padding: 10px 12px; font-weight: 600; border-bottom: 2px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  code {
+    background: var(--code-bg); color: var(--code-text); padding: 2px 8px;
+    border-radius: 4px; font-size: .85rem;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-text); padding: 1rem 1.2rem;
+    border-radius: 8px; overflow-x: auto; font-size: .85rem; line-height: 1.6; margin: .8rem 0;
+  }
+
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .78rem; font-weight: 600; margin-right: 4px; }
+  .badge-p0  { background: #fee2e2; color: #dc2626; }
+  .badge-p1  { background: #fef3c7; color: #d97706; }
+  .badge-p2  { background: #e0f2fe; color: #0284c7; }
+  .badge-pass { background: #dcfce7; color: var(--pass); }
+  .badge-fail { background: #fee2e2; color: var(--fail); }
+
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { margin-bottom: .6rem; }
+  .checklist li::before { content: "☐ "; color: var(--muted); }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+  <h1>RAG 问答系统 — 测试用例与验证计划</h1>
+  <p class="sub">24 个测试用例 · 覆盖 7 个模块 · 含步骤与验收标准</p>
+</div>
+
+<!-- ====== 测试概览 ====== -->
+<section>
+  <h2>测试概览</h2>
+  <table>
+    <tr><th>模块</th><th>用例数</th><th>优先级</th><th>覆盖目标</th></tr>
+    <tr><td>T1 — 环境验证</td><td>3</td><td><span class="badge badge-p0">P0</span></td><td>Python版本、依赖包、API Key</td></tr>
+    <tr><td>T2 — 解析器</td><td>6</td><td><span class="badge badge-p0">P0</span></td><td>5种格式解析 + 路由器路由正确性</td></tr>
+    <tr><td>T3 — 分块器</td><td>4</td><td><span class="badge badge-p0">P0</span></td><td>分块策略、token计数、overlap</td></tr>
+    <tr><td>T4 — Embedding</td><td>3</td><td><span class="badge badge-p0">P0</span></td><td>本地BGE-M3、OpenAI API、维度验证</td></tr>
+    <tr><td>T5 — ChromaDB</td><td>3</td><td><span class="badge badge-p0">P0</span></td><td>写入、查询、metadata过滤</td></tr>
+    <tr><td>T6 — 全链路</td><td>3</td><td><span class="badge badge-p0">P0</span></td><td>端到端：文档→索引→问答</td></tr>
+    <tr><td>T7 — 边界情况</td><td>2</td><td><span class="badge badge-p1">P1</span></td><td>空文件、损坏文件、不支持的格式</td></tr>
+  </table>
+</section>
+
+<!-- ====== T1 ====== -->
+<section>
+  <h2>T1 — 环境验证 <span class="badge badge-p0">P0</span></h2>
+
+  <h4>T1.1 Python 版本检查</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>确认 Python >= 3.10 可用</td></tr>
+    <tr><td>前置条件</td><td>无</td></tr>
+    <tr><td>步骤</td><td><code>python --version</code> 或 <code>rag-env\Scripts\python.exe --version</code></td></tr>
+    <tr><td>预期结果</td><td>输出 <code>Python 3.10.x</code> 或更高</td></tr>
+  </table>
+
+  <h4>T1.2 依赖包完整性检查</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>确认 11 个依赖全部可正常导入</td></tr>
+    <tr><td>前置条件</td><td>已在 rag-env 中执行 pip install</td></tr>
+    <tr><td>步骤</td><td><code>python check_env.py</code></td></tr>
+    <tr><td>预期结果</td><td>11 项全部输出 <code>[OK]</code>，最后一行 <code>ALL CHECKS PASSED</code></td></tr>
+  </table>
+
+  <h4>T1.3 API Key 配置检查</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>确认 DEEPSEEK_API_KEY 已填入真实 Key</td></tr>
+    <tr><td>前置条件</td><td>.env 文件存在</td></tr>
+    <tr><td>步骤</td><td><code>python check_env.py</code>，观察 .env Config Check 段</td></tr>
+    <tr><td>预期结果</td><td><code>DEEPSEEK_API_KEY configured (sk-xxx...)</code>，非占位符</td></tr>
+  </table>
+</section>
+
+<!-- ====== T2 ====== -->
+<section>
+  <h2>T2 — 多格式解析器 <span class="badge badge-p0">P0</span></h2>
+
+  <h4>T2.1 Markdown 解析</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 .md 文件正确提取文本并保留标题层级</td></tr>
+    <tr><td>前置条件</td><td>docs/my-notes/react-learning.md 存在</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.parsers.markdown_parser import MarkdownParser
+from pathlib import Path
+docs = MarkdownParser().parse(Path('docs/my-notes/react-learning.md'))
+for d in docs:
+    print(f'heading: [{d.metadata.get(\"heading\")}]')
+    print(f'text preview: {d.text[:80]}...')
+    print('---')
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td>
+      <td>
+        输出 3+ 个 section，每个有 heading（如 "H2: 什么是 React 组件？"）和 text<br>
+        metadata 包含 <code>source</code> 和 <code>file_type: md</code>
+      </td>
+    </tr>
+  </table>
+
+  <h4>T2.2 PDF 解析</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 PDF 按页提取文本</td></tr>
+    <tr><td>前置条件</td><td>docs/ebooks/ 下有至少一个 .pdf 文件（可手动放入）</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.parsers.pdf_parser import PDFParser
+from pathlib import Path
+import glob
+pdfs = list(Path('docs/ebooks').glob('*.pdf'))
+if pdfs:
+    docs = PDFParser().parse(pdfs[0])
+    print(f'pages: {len(docs)}')
+    for d in docs[:3]:
+        print(f'page {d.metadata[\"page\"]}: {d.text[:80]}...')
+else:
+    print('no PDF found, skip')
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td>
+      <td>每页一个 Document，metadata 含 page 字段，text 非空</td>
+    </tr>
+  </table>
+
+  <h4>T2.3 纯文本解析</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 .txt 文件正确读取</td></tr>
+    <tr><td>前置条件</td><td>docs/my-notes/python-tips.txt 存在</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.parsers.text_parser import TextParser
+from pathlib import Path
+docs = TextParser().parse(Path('docs/my-notes/python-tips.txt'))
+print(f'docs: {len(docs)}')
+print(f'text length: {len(docs[0].text)}')
+print(f'file_type: {docs[0].metadata[\"file_type\"]}')
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td><td>1 个 Document，text 非空，file_type 为 txt</td></tr>
+  </table>
+
+  <h4>T2.4 Word (.docx) 解析</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 .docx 文件段落提取和标题识别</td></tr>
+    <tr><td>前置条件</td><td>docs/ 下有 .docx 文件（可手动放入）</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.parsers.docx_parser import DocxParser
+from pathlib import Path
+import glob
+files = list(Path('docs').rglob('*.docx'))
+if files:
+    docs = DocxParser().parse(files[0])
+    print(f'sections: {len(docs)}')
+    for d in docs[:3]:
+        print(f'heading: [{d.metadata.get(\"heading\")}] text: {d.text[:60]}...')
+else:
+    print('no docx found, skip')
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td><td>正确提取段落，Heading 样式段落识别为标题</td></tr>
+  </table>
+
+  <h4>T2.5 HTML 解析</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 HTML 标签清洗和文本提取</td></tr>
+    <tr><td>前置条件</td><td>docs/web-archive/ 下有 .html 文件（可手动放入）</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.parsers.html_parser import HTMLParser
+from pathlib import Path
+import glob
+files = list(Path('docs').rglob('*.html'))
+if files:
+    docs = HTMLParser().parse(files[0])
+    print(f'docs: {len(docs)}')
+    print(f'text length: {len(docs[0].text)}')
+    print(f'no script/style tags: {\"<script>\" not in docs[0].text}')
+else:
+    print('no html found, skip')
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td><td>纯文本无 HTML 标签，script/style 内容已去除</td></tr>
+  </table>
+
+  <h4>T2.6 FileTypeRouter 路由正确性</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证路由器根据扩展名正确分发到对应解析器</td></tr>
+    <tr><td>前置条件</td><td>docs/ 下有至少 .md 和 .txt 文件</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.parsers.router import FileTypeRouter
+from pathlib import Path
+router = FileTypeRouter()
+print('supported:', router.supported_extensions)
+md = router.parse(Path('docs/my-notes/react-learning.md'))
+txt = router.parse(Path('docs/my-notes/python-tips.txt'))
+print(f'md docs: {len(md)}, first type: {md[0].metadata[\"file_type\"]}')
+print(f'txt docs: {len(txt)}, first type: {txt[0].metadata[\"file_type\"]}')
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td><td>md 文件路由到 MarkdownParser（file_type=md），txt 路由到 TextParser（file_type=txt）</td></tr>
+  </table>
+</section>
+
+<!-- ====== T3 ====== -->
+<section>
+  <h2>T3 — 分块器 <span class="badge badge-p0">P0</span></h2>
+
+  <h4>T3.1 Markdown 段落分块</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 SemanticChunker 对 Markdown 内容正确切分</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.chunker import SemanticChunker
+from src.parsers.base import Document
+doc = Document(text='Section A\n\nParagraph one. ' * 20, metadata={'file_type': 'md', 'source': 'test.md'})
+chunks = SemanticChunker().chunk([doc])
+print(f'input length: {len(doc.text)} chars')
+print(f'chunks: {len(chunks)}')
+for i, c in enumerate(chunks):
+    print(f'  chunk[{i}]: {len(c.text)} chars, {c.metadata[\"file_type\"]}')
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td><td>长文本被切分为多个 chunk，每个 chunk file_type 继承自原 doc<br>
+    如果有 overlap，相邻 chunk 尾部内容有重叠</td></tr>
+  </table>
+
+  <h4>T3.2 Token 超限自动切分</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证单段超过 chunk_size 时自动切分</td></tr>
+    <tr><td>步骤</td>
+      <td><pre>python -c "
+from src.chunker import SemanticChunker, _count_tokens
+chunker = SemanticChunker(chunk_size=100, overlap=20)
+from src.parsers.base import Document
+long_text = 'A long sentence. ' * 200
+doc = Document(text=long_text, metadata={'file_type': 'txt'})
+chunks = chunker.chunk([doc])
+print(f'total tokens: {_count_tokens(long_text)}')
+print(f'chunks: {len(chunks)}')
+for c in chunks:
+    tk = _count_tokens(c.text)
+    print(f'  chunk: {tk} tokens')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>2000+ token 文本被切为多个 <=500 token 的 chunk</td></tr>
+  </table>
+
+  <h4>T3.3 PDF 按页分块</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 PDF Document 保留 page 元数据</td></tr>
+    <tr><td>步骤</td><td><pre>python -c "
+from src.chunker import SemanticChunker
+from src.parsers.base import Document
+d1 = Document(text='Page one content. ' * 10, metadata={'file_type': 'pdf', 'source': 'test.pdf', 'page': 1})
+d2 = Document(text='Page two content. ' * 10, metadata={'file_type': 'pdf', 'source': 'test.pdf', 'page': 2})
+chunks = SemanticChunker().chunk([d1, d2])
+for c in chunks:
+    print(f'chunk page={c.metadata.get(\"page\")}, file_type={c.metadata[\"file_type\"]}')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>每个 chunk 保留 page 字段，file_type=pdf</td></tr>
+  </table>
+
+  <h4>T3.4 空内容处理</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证空文本输入不崩溃</td></tr>
+    <tr><td>步骤</td><td><pre>python -c "
+from src.chunker import SemanticChunker
+from src.parsers.base import Document
+doc = Document(text='', metadata={'file_type': 'txt'})
+chunks = SemanticChunker().chunk([doc])
+print(f'chunks from empty: {len(chunks)}')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>返回空列表，不抛异常</td></tr>
+  </table>
+</section>
+
+<!-- ====== T4 ====== -->
+<section>
+  <h2>T4 — Embedding 模块 <span class="badge badge-p0">P0</span></h2>
+
+  <h4>T4.1 本地 BGE-M3 嵌入</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证本地 BGE-M3 模型正常加载并生成向量</td></tr>
+    <tr><td>前置条件</td><td>首次运行会自动下载模型（约 2GB，需联网）</td></tr>
+    <tr><td>步骤</td>
+      <td><pre>python -c "
+from src.embedder import Embedder
+e = Embedder(provider='local')
+vecs = e.embed(['你好世界', 'Hello world'])
+print(f'vectors: {len(vecs)}')
+print(f'dimension: {len(vecs[0])}')
+print(f'normalized: {sum(v*v for v in vecs[0])}')  # 应接近 1.0
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>2 个向量，维度 1024（BGE-M3），归一化后模长≈1.0</td></tr>
+  </table>
+
+  <h4>T4.2 批量嵌入与单条嵌入一致性</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 embed_single 和 embed([text]) 行为一致</td></tr>
+    <tr><td>步骤</td>
+      <td><pre>python -c "
+from src.embedder import Embedder
+e = Embedder(provider='local')
+batch = e.embed(['测试文本'])[0]
+single = e.embed_single('测试文本')
+print(f'batch == single: {batch == single}')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>两者返回相同向量</td></tr>
+  </table>
+
+  <h4>T4.3 不支持的 provider 报错</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证未知 provider 给出明确错误</td></tr>
+    <tr><td>步骤</td><td><pre>python -c "
+from src.embedder import Embedder
+try:
+    Embedder(provider='unknown').embed(['test'])
+except ValueError as e:
+    print(f'expected error: {e}')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>抛出 ValueError，包含 "不支持的 Embedding 提供商"</td></tr>
+  </table>
+</section>
+
+<!-- ====== T5 ====== -->
+<section>
+  <h2>T5 — ChromaDB 存储 <span class="badge badge-p0">P0</span></h2>
+
+  <h4>T5.1 写入与查询</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证向量写入后能被检索到</td></tr>
+    <tr><td>步骤</td>
+      <td><pre>python -c "
+from src.embedder import Embedder
+from src.chroma_store import ChromaStore
+store = ChromaStore(collection_name='test_t5_1')
+store.clear()
+e = Embedder(provider='local')
+texts = ['React 是一个前端框架', 'Python 是一门编程语言', '今天天气很好']
+vecs = e.embed(texts)
+store.add(
+    ids=['1','2','3'],
+    embeddings=vecs,
+    documents=texts,
+    metadatas=[{'file_type':'md'},{'file_type':'txt'},{'file_type':'txt'}]
+)
+hits = store.search(e.embed_single('什么是React'), top_k=2)
+print(f'hits: {len(hits)}')
+for h in hits:
+    print(f'  {h[\"text\"][:50]}... (dist={h[\"distance\"]})')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>关于 React 的文本排在最前面，distance 最小</td></tr>
+  </table>
+
+  <h4>T5.2 Metadata 过滤</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证按 file_type 过滤只返回匹配类型的文档</td></tr>
+    <tr><td>步骤</td>
+      <td><pre>python -c "
+from src.embedder import Embedder
+from src.chroma_store import ChromaStore
+store = ChromaStore(collection_name='test_t5_2')
+store.clear()
+e = Embedder(provider='local')
+texts = ['React hooks', 'Python decorator', 'Vue component']
+vecs = e.embed(texts)
+store.add(
+    ids=['a','b','c'],
+    embeddings=vecs,
+    documents=texts,
+    metadatas=[{'file_type':'md'},{'file_type':'txt'},{'file_type':'md'}]
+)
+hits = store.search(e.embed_single('programming'), top_k=5, file_type='txt')
+print(f'filtered hits: {len(hits)}')
+for h in hits:
+    print(f'  {h[\"metadata\"][\"file_type\"]}: {h[\"text\"]}')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>只返回 file_type=txt 的文档（"Python decorator"）</td></tr>
+  </table>
+
+  <h4>T5.3 空查询处理</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证空库查询不崩溃</td></tr>
+    <tr><td>步骤</td>
+      <td><pre>python -c "
+from src.embedder import Embedder
+from src.chroma_store import ChromaStore
+store = ChromaStore(collection_name='test_t5_3')
+store.clear()
+hits = store.search([0.0]*1024, top_k=5)
+print(f'hits: {len(hits)}')
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>返回空列表，不抛异常</td></tr>
+  </table>
+</section>
+
+<!-- ====== T6 ====== -->
+<section>
+  <h2>T6 — 全链路集成测试 <span class="badge badge-p0">P0</span></h2>
+
+  <h4>T6.1 文档 → 索引 → 检索 → 生成（端到端）</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证从文档到回答的完整链路</td></tr>
+    <tr><td>前置条件</td><td>docs/my-notes/ 下有至少 1 个文件，DEEPSEEK_API_KEY 已配置</td></tr>
+    <tr><td>步骤</td>
+      <td><pre># Step 1: 索引
+python -c "from src.ingest import IngestPipeline; IngestPipeline().run()"
+
+# Step 2: 检索
+python -c "
+from src.retrieve import Retriever
+from src.generate import Generator
+r = Retriever()
+hits = r.search('什么是React组件')
+print(f'found {len(hits)} hits')
+for h in hits[:3]:
+    print(f'  [{h[\"metadata\"][\"file_type\"]}] {h[\"text\"][:60]}...')
+"
+
+# Step 3: 生成回答
+python -c "
+from src.retrieve import Retriever
+from src.generate import Generator
+r = Retriever()
+g = Generator()
+hits = r.search('什么是React组件')
+ctx = r.format_context(hits)
+ans = g.generate('什么是React组件', ctx)
+print(ans[:300])
+"</pre></td></tr>
+    <tr><td>预期结果</td>
+      <td>
+        1. 索引输出文件数量 + chunk 数量<br>
+        2. 检索返回至少 1 条结果，file_type 正确<br>
+        3. LLM 返回中文回答，引用 React 组件相关内容
+      </td>
+    </tr>
+  </table>
+
+  <h4>T6.2 空库检索返回空</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证无数据时检索正常返回空</td></tr>
+    <tr><td>步骤</td><td><pre>python -c "
+from src.retrieve import Retriever
+r = Retriever()
+print(f'count: {r.store.count()}')
+hits = r.search('任意问题')
+print(f'hits: {len(hits)}')
+# 注意：如果之前索引过，先确认 count > 0
+"</pre></td></tr>
+    <tr><td>预期结果</td><td>如果 count=0，返回空列表</td></tr>
+  </table>
+
+  <h4>T6.3 CLI 交互式问答</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证 CLI 启动正常、能响应命令</td></tr>
+    <tr><td>前置条件</td><td>已完成索引（T6.1 Step 1）</td></tr>
+    <tr><td>步骤</td>
+      <td><pre># 启动 CLI（交互式）
+python -c "from src.cli import run_cli; run_cli()"
+
+# 在 CLI 中输入问题：
+#   - 什么是React组件？
+#   - /sources
+#   - /filter md
+#   - /filter
+#   - /exit</pre></td></tr>
+    <tr><td>预期结果</td>
+      <td>
+        /sources 显示上次检索来源<br>
+        /filter md 后只会搜 Markdown 文件<br>
+        /exit 正常退出
+      </td>
+    </tr>
+  </table>
+</section>
+
+<!-- ====== T7 ====== -->
+<section>
+  <h2>T7 — 边界情况 <span class="badge badge-p1">P1</span></h2>
+
+  <h4>T7.1 不支持的格式</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证遇到未知扩展名时给出明确错误</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre>python -c "
+from src.parsers.router import FileTypeRouter
+from pathlib import Path
+# 创建一个临时文件
+Path('test.xyz').write_text('hello')
+try:
+    FileTypeRouter().parse(Path('test.xyz'))
+except ValueError as e:
+    print(f'expected error: {e}')
+Path('test.xyz').unlink()
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td><td>抛出 ValueError，包含 "不支持的文件格式" 和 ".xyz"</td></tr>
+  </table>
+
+  <h4>T7.2 解析失败不阻断整体流程</h4>
+  <table>
+    <tr><th style="width:15%">项目</th><td>说明</td></tr>
+    <tr><td>目的</td><td>验证一个损坏文件不会让整体索引崩溃</td></tr>
+    <tr><td>步骤</td>
+      <td>
+        <pre># 创建一个空 PDF（模拟损坏）
+python -c "
+from pathlib import Path
+Path('docs/ebooks/corrupt.pdf').write_text('not a real pdf')
+print('created fake pdf')
+"
+# 再运行 ingest，应跳过损坏文件继续处理其他文件
+python -c "
+from src.ingest import IngestPipeline
+IngestPipeline().run()
+"</pre>
+      </td>
+    </tr>
+    <tr><td>预期结果</td><td>损坏文件打印 ⚠️ 警告但继续处理其他文件，不中断</td></tr>
+  </table>
+</section>
+
+<!-- ====== 测试执行记录 ====== -->
+<section>
+  <h2>测试执行记录</h2>
+  <table>
+    <tr><th>用例</th><th>日期</th><th>结果</th><th>备注</th></tr>
+    <tr><td>T1.1</td><td></td><td></td><td></td></tr>
+    <tr><td>T1.2</td><td></td><td></td><td></td></tr>
+    <tr><td>T1.3</td><td></td><td></td><td></td></tr>
+    <tr><td>T2.1</td><td></td><td></td><td></td></tr>
+    <tr><td>T2.2</td><td></td><td></td><td></td></tr>
+    <tr><td>T2.3</td><td></td><td></td><td></td></tr>
+    <tr><td>T2.4</td><td></td><td></td><td></td></tr>
+    <tr><td>T2.5</td><td></td><td></td><td></td></tr>
+    <tr><td>T2.6</td><td></td><td></td><td></td></tr>
+    <tr><td>T3.1</td><td></td><td></td><td></td></tr>
+    <tr><td>T3.2</td><td></td><td></td><td></td></tr>
+    <tr><td>T3.3</td><td></td><td></td><td></td></tr>
+    <tr><td>T3.4</td><td></td><td></td><td></td></tr>
+    <tr><td>T4.1</td><td></td><td></td><td></td></tr>
+    <tr><td>T4.2</td><td></td><td></td><td></td></tr>
+    <tr><td>T4.3</td><td></td><td></td><td></td></tr>
+    <tr><td>T5.1</td><td></td><td></td><td></td></tr>
+    <tr><td>T5.2</td><td></td><td></td><td></td></tr>
+    <tr><td>T5.3</td><td></td><td></td><td></td></tr>
+    <tr><td>T6.1</td><td></td><td></td><td></td></tr>
+    <tr><td>T6.2</td><td></td><td></td><td></td></tr>
+    <tr><td>T6.3</td><td></td><td></td><td></td></tr>
+    <tr><td>T7.1</td><td></td><td></td><td></td></tr>
+    <tr><td>T7.2</td><td></td><td></td><td></td></tr>
+  </table>
+</section>
+
+<footer style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:2rem;padding:1rem;">
+  RAG 问答系统 · 测试用例与验证计划 · v1.0<br>
+  执行方式: <code>python -c "..."</code> 逐条复制到终端运行<br>
+  或包装成 <code>src/test_runner.py</code> 批量运行
+</footer>
+
+</div>
+</body>
+</html>

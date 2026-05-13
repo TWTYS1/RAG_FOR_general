@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 问答系统 — 需求与技术方案</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --card: #fff;
+    --text: #2c3e50;
+    --muted: #6c757d;
+    --accent: #2563eb;
+    --accent2: #7c3aed;
+    --border: #e2e8f0;
+    --tag-bg: #eef2ff;
+    --code-bg: #1e293b;
+    --code-text: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    padding: 2rem;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    padding: 3rem 2.5rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(37,99,235,.18);
+  }
+  .hero h1 { font-size: 2.2rem; margin-bottom: .5rem; }
+  .hero .sub { opacity: .85; font-size: 1.05rem; }
+
+  /* Sections */
+  section {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  }
+  h2 {
+    font-size: 1.35rem;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+  h3 { font-size: 1.1rem; margin: 1.2rem 0 .5rem; }
+
+  /* Tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: .6rem 0 1rem; }
+  .tag {
+    background: var(--tag-bg);
+    color: var(--accent);
+    font-size: .82rem;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .93rem; }
+  th {
+    background: var(--tag-bg);
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Lists */
+  ul, ol { padding-left: 1.5rem; margin: .5rem 0; }
+  li { margin-bottom: .35rem; }
+
+  /* Code */
+  code {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: .88rem;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 1.2rem 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: .85rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+  }
+
+  /* Mermaid */
+  .mermaid {
+    background: #fafbfc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+  }
+
+  /* Flow steps */
+  .flow-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  .flow-step {
+    flex: 1;
+    min-width: 140px;
+    background: var(--tag-bg);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+  }
+  .flow-step .num {
+    display: block;
+    width: 32px; height: 32px;
+    line-height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    margin: 0 auto .5rem;
+    font-size: .85rem;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: .85rem;
+    margin-top: 2rem;
+    padding: 1rem;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    section { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+    .hero { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ======== HERO ======== -->
+<div class="hero">
+  <h1>RAG 问答系统</h1>
+  <p class="sub">多格式文档混合索引 · 本地语义检索引擎</p>
+  <div class="tags">
+    <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">RAG</span>
+    <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">多格式解析</span>
+    <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">向量检索</span>
+    <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">LLM</span>
+    <span class="tag" style="background:rgba(255,255,255,.2);color:#fff">ChromaDB</span>
+  </div>
+</div>
+
+<!-- ======== 1. 项目概述 ======== -->
+<section>
+  <h2>1. 项目概述</h2>
+
+  <h3>1.1 一句话定义</h3>
+  <p>构建一个<strong>多格式文档混合索引的本地 RAG 问答助手</strong>。将 React 官方文档、个人笔记、PDF 电子书、导出的网页等统一接入，用户用自然语言提问，系统自动检索相关片段，交由 LLM 生成带来源引用的回答。</p>
+
+  <h3>1.2 支持的文档格式</h3>
+  <table>
+    <tr><th>格式</th><th>典型来源</th><th>解析难度</th><th>MVP 阶段</th></tr>
+    <tr>
+      <td><code>.md</code> Markdown</td>
+      <td>React/Vue 官方文档、Notion 导出、个人笔记</td>
+      <td>⭐ 低</td>
+      <td>Phase 1 首发</td>
+    </tr>
+    <tr>
+      <td><code>.pdf</code> PDF</td>
+      <td>电子书、论文、产品手册、合同</td>
+      <td>⭐⭐⭐ 中高</td>
+      <td>Phase 1 首发</td>
+    </tr>
+    <tr>
+      <td><code>.txt</code> 纯文本</td>
+      <td>日志、配置文件、导出数据</td>
+      <td>⭐ 低</td>
+      <td>Phase 1 首发</td>
+    </tr>
+    <tr>
+      <td><code>.html</code> 网页</td>
+      <td>文档站离线镜像、网页存档</td>
+      <td>⭐⭐ 中</td>
+      <td>Phase 2 追加</td>
+    </tr>
+    <tr>
+      <td><code>.docx</code> Word</td>
+      <td>团队文档、PRD、会议纪要</td>
+      <td>⭐⭐ 中</td>
+      <td>Phase 2 追加</td>
+    </tr>
+  </table>
+
+  <h3>1.3 业务场景（A + C 混合）</h3>
+  <table>
+    <tr><th style="width:12%">场景</th><th style="width:30%">用户</th><th>痛点</th><th>本系统如何解决</th></tr>
+    <tr>
+      <td><strong>A · 技术文档</strong></td>
+      <td>前端开发者 / 团队新人</td>
+      <td>React 官方文档上千页，遇到问题翻文档效率低；GPT 回答可能过时或幻觉</td>
+      <td>语义搜索 → 精准定位文档段落 → LLM 基于真实文档生成回答，杜绝幻觉</td>
+    </tr>
+    <tr>
+      <td><strong>C · 个人知识库</strong></td>
+      <td>学习者本人</td>
+      <td>学习笔记散落各处（Markdown/PDF 电子书/导出的网页），看过就忘，格式五花八门</td>
+      <td>多格式统一接入 → 混合索引 → 提问时跨格式同时检索</td>
+    </tr>
+  </table>
+
+  <h3>1.4 核心价值</h3>
+  <ul>
+    <li><strong>多格式统一</strong>：无论原始文档是 Markdown、PDF、Word 还是网页，统一解析→统一分块→统一检索，用户无感</li>
+    <li><strong>可信</strong>：每个回答都附带来源文档路径、文件类型和页码/章节，点击即可验证</li>
+    <li><strong>可控</strong>：数据在本地，不依赖云端索引，随时可增量更新文档库</li>
+    <li><strong>可演进</strong>：策略模式设计，新增文件格式只需添加一个 Parser 类，不影响现有代码</li>
+  </ul>
+</section>
+
+<!-- ======== 2. 技术架构 ======== -->
+<section>
+  <h2>2. 技术架构总览</h2>
+
+  <h3>2.1 架构图</h3>
+  <div class="mermaid">
+graph TB
+    subgraph 数据接入层["📥 数据接入层（多格式混合）"]
+        A1[Markdown 文档<br/>.md]
+        A2[PDF 电子书/论文<br/>.pdf]
+        A3[纯文本<br/>.txt]
+        A4[Word 文档<br/>.docx]
+        A5[网页存档<br/>.html]
+    end
+
+    subgraph 预处理管道["⚙️ 预处理管道"]
+        B0[格式检测器<br/>FileTypeRouter]
+        B1_md[Markdown 解析器<br/>markdown-it-py]
+        B1_pdf[PDF 解析器<br/>pdfplumber]
+        B1_txt[Text 解析器<br/>内置]
+        B1_docx[Word 解析器<br/>python-docx]
+        B1_html[HTML 解析器<br/>BeautifulSoup]
+        B2[统一分块器<br/>SemanticChunker<br/>chunk_size=500, overlap=100]
+        B3[Embedding 模型<br/>text-embedding-3-small]
+    end
+
+    subgraph 存储层["💾 存储层"]
+        C1[(ChromaDB<br/>向量数据库)]
+        C2[(元数据索引<br/>来源路径 / 文件类型 / 标题 / 页码)]
+    end
+
+    subgraph 检索层["🔍 检索层"]
+        D1[用户 Query]
+        D2[Query 向量化]
+        D3[语义相似度检索<br/>Top-K=8]
+        D4[Metadata 过滤<br/>可选：按文件类型/来源筛选]
+    end
+
+    subgraph 生成层["🧠 生成层"]
+        E1[Prompt 组装<br/>System + Context + Query]
+        E2[LLM API 调用<br/>OpenAI / DeepSeek]
+        E3[后处理<br/>来源引用 + 文件类型标注]
+    end
+
+    subgraph 交互层["🖥️ 交互层"]
+        F1[CLI 命令行]
+        F2[Streamlit Web UI]
+    end
+
+    A1 --> B0
+    A2 --> B0
+    A3 --> B0
+    A4 --> B0
+    A5 --> B0
+    B0 --> B1_md
+    B0 --> B1_pdf
+    B0 --> B1_txt
+    B0 --> B1_docx
+    B0 --> B1_html
+    B1_md --> B2
+    B1_pdf --> B2
+    B1_txt --> B2
+    B1_docx --> B2
+    B1_html --> B2
+    B2 --> B3
+    B3 --> C1
+    B3 --> C2
+    D1 --> D2
+    D2 --> D3
+    C1 --> D3
+    C2 --> D4
+    D3 --> D4
+    D4 --> E1
+    E1 --> E2
+    E2 --> E3
+    E3 --> F1
+    E3 --> F2
+
+    style A1 fill:#dbeafe,stroke:#2563eb
+    style A2 fill:#dbeafe,stroke:#2563eb
+    style A3 fill:#dbeafe,stroke:#2563eb
+    style A4 fill:#dbeafe,stroke:#2563eb
+    style A5 fill:#dbeafe,stroke:#2563eb
+    style B0 fill:#ede9fe,stroke:#7c3aed
+    style B2 fill:#ede9fe,stroke:#7c3aed
+    style C1 fill:#fef3c7,stroke:#d97706
+    style C2 fill:#fef3c7,stroke:#d97706
+    style E2 fill:#fce7f3,stroke:#db2777
+  </div>
+
+  <h3>2.2 技术选型表</h3>
+  <table>
+    <tr><th>层次</th><th>技术</th><th>版本/说明</th><th>选型理由</th></tr>
+    <tr>
+      <td>语言</td>
+      <td>Python</td>
+      <td>≥ 3.10</td>
+      <td>AI 生态最完善，所有依赖都有第一方支持</td>
+    </tr>
+    <tr>
+      <td>格式路由</td>
+      <td><strong>FileTypeRouter</strong>（自研）</td>
+      <td>根据扩展名 + MIME type 双重判断</td>
+      <td>策略模式入口，将不同文件路由到对应解析器，新增格式只需注册</td>
+    </tr>
+    <tr>
+      <td>Markdown 解析</td>
+      <td><code>markdown-it-py</code></td>
+      <td>latest</td>
+      <td>保留 AST 标题层级，语义分块时有结构信息可用</td>
+    </tr>
+    <tr>
+      <td>PDF 解析</td>
+      <td><code>pdfplumber</code></td>
+      <td>latest</td>
+      <td>比 PyMuPDF 更易用，文本 + 表格提取一体，中文兼容性好</td>
+    </tr>
+    <tr>
+      <td>Word 解析</td>
+      <td><code>python-docx</code></td>
+      <td>latest</td>
+      <td>标准库，提取段落 + 表格，支持标题样式识别</td>
+    </tr>
+    <tr>
+      <td>HTML 解析</td>
+      <td><code>beautifulsoup4</code></td>
+      <td>latest</td>
+      <td>去标签 + 保留标题层级，配合 lxml 解析速度快</td>
+    </tr>
+    <tr>
+      <td>分块策略</td>
+      <td><strong>SemanticChunker</strong>（自研）</td>
+      <td>chunk_size≈500 tokens<br/>overlap≈100 tokens</td>
+      <td>统一分块接口：Markdown 按标题切、PDF/Word 按段落+滑动窗口、纯文本按空行</td>
+    </tr>
+    <tr>
+      <td>Embedding</td>
+      <td><code>text-embedding-3-small</code></td>
+      <td>OpenAI / 1536 维</td>
+      <td>性价比最优，中文效果好；可降级为本地 BGE-M3</td>
+    </tr>
+    <tr>
+      <td>向量数据库</td>
+      <td><strong>ChromaDB</strong></td>
+      <td>最新 stable</td>
+      <td>零配置持久化、Python 原生 API、支持 metadata 过滤</td>
+    </tr>
+    <tr>
+      <td>LLM</td>
+      <td>OpenAI / DeepSeek API</td>
+      <td>GPT-4o 或 deepseek-chat</td>
+      <td>支持 function calling，方便后续升级为 Agent</td>
+    </tr>
+    <tr>
+      <td>UI（MVP）</td>
+      <td>CLI（标准输入输出）</td>
+      <td>Python <code>input()</code> 循环</td>
+      <td>最快跑通链路，不引入额外依赖</td>
+    </tr>
+    <tr>
+      <td>UI（演示）</td>
+      <td>Streamlit</td>
+      <td>latest</td>
+      <td>5 行代码起一个 Chat UI，支持 Markdown 渲染来源引用</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ======== 3. 执行逻辑 ======== -->
+<section>
+  <h2>3. 核心执行逻辑</h2>
+
+  <h3>3.1 文档预处理流水线（离线）</h3>
+  <div class="flow-row">
+    <div class="flow-step"><span class="num">1</span>递归扫描 docs/，收集所有支持格式</div>
+    <div class="flow-step"><span class="num">2</span>FileTypeRouter 判断格式，路由到对应 Parser</div>
+    <div class="flow-step"><span class="num">3</span>各 Parser 提取纯文本 + 保留结构信息</div>
+    <div class="flow-step"><span class="num">4</span>统一 SemanticChunker 切分为 chunk</div>
+    <div class="flow-step"><span class="num">5</span>每个 chunk → Embedding API 生成向量</div>
+    <div class="flow-step"><span class="num">6</span>向量 + 元数据写入 ChromaDB</div>
+  </div>
+  <p style="color:var(--muted);font-size:.88rem">⏱ 预计时间：React 文档 + PDF 电子书 + 笔记混合，约 2000-3000 个 chunk，Embedding API 并行调用 5-10 分钟</p>
+
+  <h3>3.2 分块策略——按文件类型差异化</h3>
+  <table>
+    <tr><th>文件类型</th><th>分块方式</th><th>chunk_size</th><th>overlap</th><th>说明</th></tr>
+    <tr>
+      <td>Markdown</td>
+      <td>按 H2/H3 标题语义切分</td>
+      <td>~500 tokens</td>
+      <td>100 tokens</td>
+      <td>利用 AST 解析标题层级，保证每个 chunk 是一个完整的知识点</td>
+    </tr>
+    <tr>
+      <td>PDF</td>
+      <td>按页码 + 段落滑动窗口</td>
+      <td>~500 tokens</td>
+      <td>100 tokens</td>
+      <td>PDF 无标题结构，按页切后滑动窗口保证跨页内容不断裂</td>
+    </tr>
+    <tr>
+      <td>Word</td>
+      <td>按段落 + 标题样式</td>
+      <td>~500 tokens</td>
+      <td>100 tokens</td>
+      <td>优先识别 Heading 样式作为切分点，无样式则按段落滑动</td>
+    </tr>
+    <tr>
+      <td>HTML</td>
+      <td>按 h1-h6 标签 + section</td>
+      <td>~500 tokens</td>
+      <td>100 tokens</td>
+      <td>利用 DOM 结构，原理同 Markdown</td>
+    </tr>
+    <tr>
+      <td>纯文本</td>
+      <td>按空行 + 滑动窗口</td>
+      <td>~500 tokens</td>
+      <td>100 tokens</td>
+      <td>双换行作为自然段落边界，超出上限则滑动切分</td>
+    </tr>
+  </table>
+
+  <h3>3.3 在线问答流程</h3>
+  <div class="flow-row">
+    <div class="flow-step"><span class="num">1</span>用户输入自然语言问题</div>
+    <div class="flow-step"><span class="num">2</span>Query → Embedding 向量化</div>
+    <div class="flow-step"><span class="num">3</span>ChromaDB 语义检索 Top-K（k=8）</div>
+    <div class="flow-step"><span class="num">4</span>Metadata 过滤（可选：限定文件类型）</div>
+    <div class="flow-step"><span class="num">5</span>组装 Prompt：System 指令 + Context + Query</div>
+    <div class="flow-step"><span class="num">6</span>调用 LLM 生成回答（带来源引用 + 格式标签）</div>
+    <div class="flow-step"><span class="num">7</span>格式化输出：回答 + 引用来源</div>
+  </div>
+
+  <h3>3.4 Prompt 设计</h3>
+  <pre>
+## System Prompt
+你是一个技术文档助手。请严格基于下方提供的文档片段回答问题。
+文档来源可能包含多种格式（Markdown/PDF/Word/网页等）。
+如果文档片段不足以回答，请明确说"当前文档库未覆盖此问题"。
+回答时在关键信息后标注来源编号，如 [1]、[2]。
+
+## Context（检索到的文档片段）
+[1] 来源: react-docs/learn/your-first-component.md [Markdown]
+当你构建用户界面时，你会将 UI 拆解为一些独立的、可复用的部分，
+这些部分被称为组件（component）...
+
+[2] 来源: ebooks/react-design-patterns.pdf (第 42 页) [PDF]
+A React component is a JavaScript function that returns JSX markup.
+Components can be composed together to build complex UIs...
+
+[3] 来源: my-notes/react-learning.md [Markdown · 个人笔记]
+React 组件本质上就是一个返回 JSX 的 JavaScript 函数...
+
+## Query
+什么是 React 组件？</pre>
+</section>
+
+<!-- ======== 4. 项目结构 ======== -->
+<section>
+  <h2>4. 项目目录结构</h2>
+  <pre>
+project1/
+├── docs/                      # 文档源文件（自行放入，混合格式）
+│   ├── react-docs/            #   git clone React 文档仓库 (.md)
+│   ├── my-notes/              #   个人笔记 (.md / .txt)
+│   ├── ebooks/                #   PDF 电子书 (.pdf)
+│   └── web-archive/           #   网页存档 (.html)
+├── src/
+│   ├── parsers/               # 多格式解析器（策略模式）
+│   │   ├── __init__.py
+│   │   ├── router.py          #   FileTypeRouter：格式检测 + 路由
+│   │   ├── base.py            #   BaseParser 抽象基类
+│   │   ├── markdown_parser.py #   Markdown 解析器
+│   │   ├── pdf_parser.py      #   PDF 解析器
+│   │   ├── text_parser.py     #   纯文本解析器
+│   │   ├── docx_parser.py     #   Word 解析器
+│   │   └── html_parser.py     #   HTML 解析器
+│   ├── chunker.py             # 统一分块器（SemanticChunker）
+│   ├── embedder.py            # Embedding 调用 + 批量重试
+│   ├── ingest.py              # 预处理入口：遍历 → 解析 → 分块 → 向量化 → 写入
+│   ├── retrieve.py            # 检索模块：Query 向量化 → ChromaDB 查询
+│   ├── generate.py            # 生成模块：Prompt 组装 → LLM 调用 → 后处理
+│   ├── cli.py                 # CLI 入口：交互式问答循环
+│   └── app.py                 # Streamlit Web UI 入口
+├── chroma_data/               # ChromaDB 持久化目录（自动生成）
+├── requirements.txt           # Python 依赖
+├── .env.example               # API Key 模板
+└── README.md                  # 项目说明</pre>
+</section>
+
+<!-- ======== 5. 实施计划 ======== -->
+<section>
+  <h2>5. 分阶段实施计划</h2>
+
+  <table>
+    <tr><th style="width:10%">阶段</th><th style="width:20%">目标</th><th>具体任务</th><th style="width:18%">预估时间</th></tr>
+    <tr>
+      <td><strong>Phase 0</strong></td>
+      <td>环境搭建</td>
+      <td>
+        <ul>
+          <li>pip install chromadb openai tiktoken markdown-it-py pdfplumber python-docx beautifulsoup4 lxml python-dotenv streamlit</li>
+          <li>配置 .env（OPENAI_API_KEY / DEEPSEEK_API_KEY）</li>
+          <li>git clone React 文档到 docs/react-docs/</li>
+          <li>放入 PDF 电子书到 docs/ebooks/、个人笔记到 docs/my-notes/</li>
+        </ul>
+      </td>
+      <td>30 分钟</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 1</strong></td>
+      <td>多格式解析器 + 预处理管道</td>
+      <td>
+        <ul>
+          <li>实现 FileTypeRouter（扩展名 + MIME 检测 → 路由到对应 Parser）</li>
+          <li>实现 BaseParser 抽象基类（统一接口：parse() → List[Document]）</li>
+          <li>实现 5 个解析器：Markdown、PDF、Word、HTML、纯文本</li>
+          <li>实现 SemanticChunker（按文件类型选择分块策略）</li>
+          <li>实现 Embedding 调用 + 批量错误重试</li>
+          <li>实现 ChromaDB 写入（metadata：来源路径、文件类型、标题/页码）</li>
+          <li>运行 ingest.py 完成首次全量索引</li>
+        </ul>
+      </td>
+      <td>2 小时</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 2</strong></td>
+      <td>检索 + 生成链路</td>
+      <td>
+        <ul>
+          <li>实现检索模块：Query 向量化 + ChromaDB.similarity_search()</li>
+          <li>支持 metadata 过滤（如只搜 PDF、只搜个人笔记）</li>
+          <li>实现 Prompt 组装 + LLM 调用</li>
+          <li>联调：从输入问题到输出回答的完整链路</li>
+        </ul>
+      </td>
+      <td>45 分钟</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 3</strong></td>
+      <td>CLI 交互式问答</td>
+      <td>
+        <ul>
+          <li>实现交互式 CLI 循环（/exit 退出，/sources 显示引用，/filter 按格式过滤）</li>
+          <li>答案格式化输出：文件类型图标 + 来源路径 + 页码标注</li>
+          <li>边界情况处理：空检索结果、API 超时、无效输入、损坏文件跳过</li>
+        </ul>
+      </td>
+      <td>30 分钟</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 4</strong></td>
+      <td>Streamlit Web UI</td>
+      <td>
+        <ul>
+          <li>Chat 对话界面（对话历史保留）</li>
+          <li>侧边栏：按文件类型筛选 + 显示检索来源片段</li>
+          <li>文档上传入口：拖拽上传新文件即时索引</li>
+        </ul>
+      </td>
+      <td>1 小时</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ======== 6. 后续演进 ======== -->
+<section>
+  <h2>6. 产品演进路线图</h2>
+
+  <div class="mermaid">
+timeline
+    title RAG 系统产品演进
+    MVP v0.1 : 多格式文档索引（MD/PDF/TXT/DOCX/HTML）
+             : CLI 交互式问答
+             : 来源引用 + 格式标签
+    v0.2    : Streamlit Web UI
+            : 对话历史持久化
+            : 拖拽上传即时索引
+            : 按文件类型筛选
+    v0.3    : Hybrid Search（语义 + BM25）
+            : 检索结果重排序 / Rerank
+            : 中文分块优化
+    v0.4    : 多文档对比问答（跨文档综合分析）
+            : 用户反馈标注（👍/👎）
+            : 检索质量评估 + 可视化
+    v1.0    : Agent 工具调用（自动检索 + 代码执行）
+            : 文件系统监听（新增/修改文档自动索引）
+            : Docker 一键部署
+  </div>
+</section>
+
+<footer>
+  RAG 问答系统 · 需求与技术方案 · 2026-05-12
+</footer>
+
+</div>
+
+<script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>
+</body>
+</html>

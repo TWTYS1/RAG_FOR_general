@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 项目 — 数据填充完全指南</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #fff; --text: #2c3e50; --muted: #6c757d;
+    --accent: #7c3aed; --border: #e2e8f0; --code-bg: #1e293b; --code-text: #e2e8f0;
+    --ok-bg: #f0fdf4; --ok-border: #22c55e;
+    --info-bg: #eff6ff; --info-border: #3b82f6;
+    --warn-bg: #fffbeb; --warn-border: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8; padding: 2rem;
+  }
+  .container { max-width: 920px; margin: 0 auto; }
+  .hero {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: #fff; padding: 2.5rem; border-radius: 16px; margin-bottom: 2rem;
+  }
+  .hero h1 { font-size: 2rem; margin-bottom: .4rem; }
+  section {
+    background: var(--card); border-radius: 12px; padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem; border: 1px solid var(--border);
+  }
+  h2 { font-size: 1.3rem; border-bottom: 2px solid var(--accent); padding-bottom: .5rem; display: inline-block; margin-bottom: 1rem; }
+  h3 { font-size: 1.05rem; margin: 1.5rem 0 .6rem; color: var(--accent); }
+  h4 { font-size: .95rem; margin: 1rem 0 .4rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+  th { background: #f3eeff; text-align: left; padding: 10px 14px; font-weight: 600; border-bottom: 2px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  code {
+    background: var(--code-bg); color: var(--code-text); padding: 2px 8px;
+    border-radius: 4px; font-size: .85rem;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-text); padding: 1rem 1.2rem;
+    border-radius: 8px; overflow-x: auto; font-size: .85rem; line-height: 1.6; margin: .8rem 0;
+  }
+  .box {
+    padding: 1rem 1.2rem; border-radius: 8px; margin: 1rem 0; font-size: .93rem; border-left: 4px solid;
+  }
+  .box.info { background: var(--info-bg); border-color: var(--info-border); }
+  .box.ok   { background: var(--ok-bg);  border-color: var(--ok-border); }
+  .box.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .78rem; font-weight: 600; margin-right: 4px;
+  }
+  .tag-md   { background: #dbeafe; color: #2563eb; }
+  .tag-pdf  { background: #fee2e2; color: #dc2626; }
+  .tag-txt  { background: #fef3c7; color: #b45309; }
+  .tag-html { background: #f3e8ff; color: #7c3aed; }
+  .tag-docx { background: #e0f2fe; color: #0284c7; }
+  ol li { margin-bottom: .5rem; }
+  ul li { margin-bottom: .3rem; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+  <h1>📥 RAG 问答系统 — 数据填充完全指南</h1>
+  <p style="opacity:.9">手把手教你找数据、放数据、验数据，让系统有东西可搜</p>
+</div>
+
+<!-- ====== 数据流向 ====== -->
+<section>
+  <h2>数据流向一览</h2>
+  <pre>
+你放入 docs/ 的文件  →  ingest.py 扫描  →  解析器提取文本
+                                              ↓
+  CLI / Web 问答     ←  LLM 生成回答    ←  向量检索 (ChromaDB)  ←  Embedding 向量化
+  </pre>
+  <p>核心原则：<strong>docs/ 就是数据源</strong>。你往里面放什么格式的文件，系统就索引什么。</p>
+</section>
+
+<!-- ====== 方式一：React 官方文档 ====== -->
+<section>
+  <h2>方式一：克隆 React 官方文档 <span class="tag tag-md">.md</span></h2>
+
+  <h3>为什么是 React 文档？</h3>
+  <p>React 官方文档站本身就是用 Markdown 写的，开源在 GitHub。克隆下来直接就是几千个高质量 .md 文件，不需要任何处理。</p>
+
+  <h3>操作步骤</h3>
+  <ol>
+    <li>打开 VS Code 终端（<code>Ctrl + `</code>）</li>
+    <li>进入目标目录：
+      <pre>cd docs/react-docs</pre>
+    </li>
+    <li>克隆仓库（浅克隆，只取最新版本，约 50MB）：
+      <pre>git clone --depth 1 https://github.com/reactjs/react.dev.git .</pre>
+      <p style="color:var(--muted);font-size:.85rem">注意末尾有个 <code>.</code>，表示克隆到当前目录而不是新建子目录。</p>
+    </li>
+  </ol>
+
+  <div class="box info">
+    <strong>如果没装 Git：</strong><br>
+    去 <a href="https://git-scm.com/download/win" target="_blank">git-scm.com/download/win</a> 下载安装，一路默认即可。<br>
+    或者直接在 GitHub 页面点 "Code → Download ZIP"，解压到 <code>docs/react-docs/</code>。
+  </div>
+
+  <h3>克隆后检查</h3>
+  <pre>dir src\content\learn</pre>
+  <p style="color:var(--muted);font-size:.85rem">这里面全是 .md 文件（如 <code>your-first-component.md</code>），就是 React 官方教程。</p>
+
+  <div class="box ok">
+    <strong>预期收获：</strong>约 200+ 个 Markdown 文件，覆盖 React 全部核心概念、API 参考、教程。这是你知识库的主力军。
+  </div>
+</section>
+
+<!-- ====== 方式二：PDF 电子书 ====== -->
+<section>
+  <h2>方式二：PDF 电子书 / 论文 <span class="tag tag-pdf">.pdf</span></h2>
+
+  <h3>从哪找？</h3>
+  <table>
+    <tr><th>来源</th><th>内容</th><th>怎么获取</th></tr>
+    <tr>
+      <td>ArXiv</td>
+      <td>学术论文（如 "Attention Is All You Need"）</td>
+      <td><a href="https://arxiv.org" target="_blank">arxiv.org</a> 搜索 → Download PDF</td>
+    </tr>
+    <tr>
+      <td>官方文档 PDF 版</td>
+      <td>React/Vue/Node.js 文档</td>
+      <td>很多文档站提供 PDF 下载（页脚找 "Download PDF"）</td>
+    </tr>
+    <tr>
+      <td>技术书籍</td>
+      <td>你自己购买的 PDF 电子书</td>
+      <td>放到 <code>docs/ebooks/</code> 即可</td>
+    </tr>
+    <tr>
+      <td>公开手册</td>
+      <td>如 《TypeScript Handbook》PDF</td>
+      <td>搜索 "typescript handbook pdf"</td>
+    </tr>
+  </table>
+
+  <h3>放入方式</h3>
+  <p>直接把 .pdf 文件拖进 <code>docs/ebooks/</code> 文件夹，支持子目录。</p>
+  <pre>docs/ebooks/
+├── react-design-patterns.pdf
+├── typescript-handbook.pdf
+└── paper/
+    └── attention-is-all-you-need.pdf</pre>
+</section>
+
+<!-- ====== 方式三：个人笔记 ====== -->
+<section>
+  <h2>方式三：个人笔记 <span class="tag tag-md">.md</span> <span class="tag tag-txt">.txt</span></h2>
+  <p>把你平时的学习笔记、代码片段、踩坑记录放进去。任何 .md 或 .txt 文件都可以。</p>
+
+  <h3>快速生成测试笔记</h3>
+  <p>在 VS Code 里直接新建文件，放到 <code>docs/my-notes/</code>：</p>
+  <pre>docs/my-notes/
+├── react-learning.md      # 已有（React 笔记示例）
+├── python-tips.txt        # 已有（Python 虚拟环境笔记）
+├── git-cheatsheet.md      # 你可以新建：Git 常用命令
+├── css-布局笔记.md         # 你可以新建：Flexbox/Grid 笔记
+└── js-闭包理解.txt         # 你可以新建：JS 闭包和原型链</pre>
+
+  <div class="box info">
+    <strong>格式要求：</strong>UTF-8 编码即可，Markdown 支持标题层级（# ## ###）。文件名中文英文都行。
+  </div>
+</section>
+
+<!-- ====== 方式四：网页存档 ====== -->
+<section>
+  <h2>方式四：网页存档 <span class="tag tag-html">.html</span></h2>
+
+  <h3>怎么获取？</h3>
+  <ol>
+    <li>浏览器打开你想保存的技术文章</li>
+    <li><code>Ctrl + S</code> → 保存类型选 "网页，仅 HTML"</li>
+    <li>把 .html 文件放到 <code>docs/web-archive/</code></li>
+  </ol>
+
+  <h3>适合保存什么？</h3>
+  <ul>
+    <li>掘金 / 知乎 / Medium 上的高质量技术文章</li>
+    <li>技术博客（如 Dan Abramov 的 overreacted.io）</li>
+    <li>官方文档的某个单页（如 React 某个 API 页面）</li>
+  </ul>
+</section>
+
+<!-- ====== 方式五：Word 文档 ====== -->
+<section>
+  <h2>方式五：Word 文档 <span class="tag tag-docx">.docx</span></h2>
+  <p>把你工作中的技术文档、PRD、会议纪要（.docx 格式）放到 <code>docs/</code> 下任意位置即可。</p>
+  <p style="color:var(--muted);font-size:.85rem">支持 Heading 样式识别，Word 里的"标题1/2/3"会被当作章节切分点。</p>
+</section>
+
+<!-- ====== 验证 ====== -->
+<section>
+  <h2>放入数据后：三步验证</h2>
+
+  <h4>第 1 步：看文件认不认</h4>
+  <pre>python -c "
+from src.ingest import IngestPipeline
+p = IngestPipeline()
+files = p._collect_files()
+print(f'共发现 {len(files)} 个文件:')
+for f in files:
+    print(f'  {f.suffix}  {f.relative_to(p.docs_dir)}')
+"</pre>
+
+  <h4>第 2 步：跑索引</h4>
+  <pre>python -c "from src.ingest import IngestPipeline; IngestPipeline().run()"</pre>
+  <p style="color:var(--muted);font-size:.85rem">每行输出一个文件的索引结果，最后显示总数。首次跑 Embedding 模型会自动下载（约 2GB，只下载一次）。</p>
+
+  <h4>第 3 步：搜一下试试</h4>
+  <pre>python -c "
+from src.retrieve import Retriever
+from src.generate import Generator
+r = Retriever()
+g = Generator()
+hits = r.search('React 组件是什么')
+print(f'找到 {len(hits)} 条结果')
+ctx = r.format_context(hits)
+print(g.generate('React 组件是什么', ctx))
+"</pre>
+
+  <div class="box ok">
+    <strong>看到什么算成功？</strong>DeepSeek 返回一段中文回答，引用你放进 docs/ 的文档内容，末尾带来源编号 [1]、[2]。
+  </div>
+</section>
+
+<!-- ====== 速查 ====== -->
+<section>
+  <h2>速查：各格式放哪里</h2>
+  <table>
+    <tr><th>格式</th><th>放哪里</th><th>获取方式</th></tr>
+    <tr><td><span class="tag tag-md">.md</span></td><td><code>docs/react-docs/</code> 或 <code>docs/my-notes/</code></td><td>git clone / 自己写</td></tr>
+    <tr><td><span class="tag tag-pdf">.pdf</span></td><td><code>docs/ebooks/</code></td><td>下载 / 购买</td></tr>
+    <tr><td><span class="tag tag-txt">.txt</span></td><td><code>docs/my-notes/</code></td><td>自己写</td></tr>
+    <tr><td><span class="tag tag-html">.html</span></td><td><code>docs/web-archive/</code></td><td>浏览器 Ctrl+S 保存</td></tr>
+    <tr><td><span class="tag tag-docx">.docx</span></td><td><code>docs/</code> 下任意位置</td><td>工作文档复制过来</td></tr>
+  </table>
+  <p style="color:var(--muted);font-size:.85rem">所有格式都支持子目录递归扫描，你可以在 docs/ 下随便建文件夹组织。</p>
+</section>
+
+<footer style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:2rem;padding:1rem;">
+  RAG 问答系统 · 数据填充完全指南 · 2026-05-13
+</footer>
+
+</div>
+</body>
+</html>

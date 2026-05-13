@@ -1,0 +1,20 @@
+Python 虚拟环境最佳实践
+
+虚拟环境是 Python 项目开发中的关键工具。它创建一个隔离的 Python 环境，让每个项目的依赖互相独立。
+
+创建虚拟环境：
+python -m venv my-env
+
+激活后，pip install 的包只会安装到该环境内，不会影响系统 Python。
+
+为什么需要虚拟环境？
+1. 不同项目可能需要同一个包的不同版本
+2. 避免污染系统 Python
+3. 方便通过 requirements.txt 复现环境
+4. 删掉文件夹就能彻底卸载所有依赖
+
+常用命令：
+- 创建: python -m venv env-name
+- 激活: env-name\Scripts\activate (Windows)
+- 导出: pip freeze > requirements.txt
+- 安装: pip install -r requirements.txt

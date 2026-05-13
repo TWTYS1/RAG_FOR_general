@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 项目 — 从零搭建指南</title>
+<style>
+  :root {
+    --bg: #f8f9fa; --card: #fff; --text: #2c3e50; --muted: #6c757d;
+    --accent: #7c3aed; --accent2: #2563eb; --border: #e2e8f0;
+    --tag-bg: #f3eeff; --code-bg: #1e293b; --code-text: #e2e8f0;
+    --warn-bg: #fffbeb; --warn-border: #f59e0b;
+    --info-bg: #eff6ff; --info-border: #3b82f6;
+    --success-bg: #f0fdf4; --success-border: #22c55e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8; padding: 2rem;
+  }
+  .container { max-width: 920px; margin: 0 auto; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    color: #fff; padding: 2.5rem 2.5rem; border-radius: 16px; margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(124,58,237,.18);
+  }
+  .hero h1 { font-size: 2rem; margin-bottom: .4rem; }
+  .hero .sub { opacity: .9; font-size: 1rem; }
+
+  section {
+    background: var(--card); border-radius: 12px; padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem; border: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+  }
+  h2 {
+    font-size: 1.3rem; margin-bottom: 1rem; padding-bottom: .5rem;
+    border-bottom: 2px solid var(--accent); display: inline-block;
+  }
+  h3 { font-size: 1.05rem; margin: 1.5rem 0 .6rem; }
+  h4 { font-size: .95rem; margin: 1rem 0 .4rem; color: var(--accent); }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .93rem; }
+  th { background: var(--tag-bg); text-align: left; padding: 10px 14px; font-weight: 600; border-bottom: 2px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  ul, ol { padding-left: 1.5rem; margin: .6rem 0; }
+  li { margin-bottom: .6rem; }
+
+  code {
+    background: #f1f5f9; color: #1e293b; padding: 2px 6px;
+    border-radius: 4px; font-size: .88rem;
+    font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-text); padding: 1.2rem 1.5rem;
+    border-radius: 8px; overflow-x: auto; font-size: .85rem; line-height: 1.6; margin: 1rem 0;
+  }
+
+  .box {
+    padding: 1rem 1.2rem; border-radius: 8px; margin: 1rem 0; font-size: .93rem;
+    border-left: 4px solid;
+  }
+  .box.warn  { background: var(--warn-bg);  border-color: var(--warn-border); }
+  .box.info  { background: var(--info-bg);  border-color: var(--info-border); }
+  .box.ok    { background: var(--success-bg); border-color: var(--success-border); }
+
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 30px; height: 30px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-weight: 700; font-size: .85rem; margin-right: .5rem;
+  }
+
+  .tag {
+    display: inline-block; background: var(--tag-bg); color: var(--accent);
+    font-size: .8rem; padding: 2px 10px; border-radius: 20px; font-weight: 500; margin-right: 4px;
+  }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li::before { content: "☐ "; color: var(--muted); }
+
+  /* Sticky TOC */
+  .toc {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.5rem 2rem; margin-bottom: 1.5rem;
+  }
+  .toc h3 { margin: 0 0 .8rem 0; }
+  .toc ol { margin: 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ====== HERO ====== -->
+<div class="hero">
+  <h1>📦 RAG 问答系统 — 从零搭建指南</h1>
+  <p class="sub">虚拟环境 · 依赖安装 · API Key 配置 · 每次回来都能照着做</p>
+</div>
+
+<!-- ====== TOC ====== -->
+<div class="toc">
+  <h3>🗺️ 目录（总共 5 步，约 15 分钟）</h3>
+  <ol>
+    <li><a href="#s1">确认 Python 环境</a></li>
+    <li><a href="#s2">创建虚拟环境 <code>rag-env</code></a></li>
+    <li><a href="#s3">激活虚拟环境 + 安装依赖包</a></li>
+    <li><a href="#s4">配置 API Key（DeepSeek 为主）</a></li>
+    <li><a href="#s5">验证一切正常</a></li>
+  </ol>
+</div>
+
+<!-- ====== 1. Python ====== -->
+<section id="s1">
+  <h2>第 1 步：确认 Python 环境</h2>
+
+  <h4>这个东西是干什么的？</h4>
+  <p>Python 是这个项目的运行基础——就像一个"翻译官"，负责理解和执行我们写的代码。所以电脑里必须先有它。</p>
+
+  <h4>检查有没有装</h4>
+  <p>打开 <strong>VS Code 终端</strong>：菜单栏 → Terminal → New Terminal，或者直接按 <code>Ctrl + `</code>（Tab 上面那个键），然后输入：</p>
+  <pre>python --version</pre>
+
+  <div class="box info">
+    <strong>期望看到：</strong><code>Python 3.10.x</code> 或更高版本（3.11、3.12 都可以）
+  </div>
+
+  <div class="box warn">
+    <strong>如果显示 "python 不是内部或外部命令"：</strong><br>
+    说明 Python 没装或没加到 PATH。去 <a href="https://www.python.org/downloads/" target="_blank">python.org/downloads</a> 下载，安装时<span style="background:#fef3c7;padding:2px 6px;border-radius:3px">一定勾选底部的 "Add Python to PATH"</span>，然后再装。
+  </div>
+
+  <p style="margin-top:1rem;">同时确认 pip（Python 的包管理器，用来下载第三方库）可用：</p>
+  <pre>pip --version</pre>
+  <p style="color:var(--muted);font-size:.85rem">会输出类似 <code>pip 24.x from ...</code> 的信息。</p>
+</section>
+
+<!-- ====== 2. 虚拟环境 ====== -->
+<section id="s2">
+  <h2>第 2 步：创建虚拟环境 <code>rag-env</code></h2>
+
+  <h4>这个东西是干什么的？</h4>
+  <p>虚拟环境就像给这个项目建了一个<strong>独立的"小房间"</strong>。所有下载的包都锁在这个房间里，不会跟电脑上其他 Python 项目互相干扰。以后不想要了，删掉这个文件夹就彻底干净。</p>
+  <p>至于名字——<code>rag-env</code> = RAG + Environment，一眼就知道是这个项目专属的环境。</p>
+
+  <h4>创建（只需做一次）</h4>
+  <p>确保终端当前在项目目录：</p>
+  <pre>cd D:\vibecoding\project1</pre>
+  <p>然后执行：</p>
+  <pre>python -m venv rag-env</pre>
+
+  <div class="box info">
+    <strong>这条命令做了什么？</strong><br>
+    在项目文件夹里生成了一个 <code>rag-env\</code> 目录，里面装着一套<strong>独立的 Python 解释器 + pip</strong>。此时什么都没装，是个空房间。
+  </div>
+
+  <p style="margin-top:1rem;">执行完确认一下文件夹存在：</p>
+  <pre>dir rag-env</pre>
+  <p style="color:var(--muted);font-size:.85rem">应该看到 <code>Scripts</code>、<code>Lib</code> 等子目录，说明创建成功。</p>
+
+  <div class="box ok">
+    <strong>✅ 第 2 步完成。</strong>这个步骤只需要做<strong>一次</strong>，以后再次打开项目不需要重新创建。
+  </div>
+</section>
+
+<!-- ====== 3. 激活 + 安装 ====== -->
+<section id="s3">
+  <h2>第 3 步：激活环境 + 安装依赖包</h2>
+
+  <h4>3.1 激活虚拟环境</h4>
+  <p><strong>每次重新打开终端都要先激活</strong>，否则 pip 会把包装到系统 Python 而不是 rag-env 里。</p>
+  <pre>rag-env\Scripts\activate</pre>
+
+  <p style="color:var(--muted);font-size:.85rem">执行成功后，终端最前面会出现 <code>(rag-env)</code> 标记，像这样：<code>(rag-env) D:\vibecoding\project1&gt;</code></p>
+  <p style="color:var(--muted);font-size:.85rem">看到这个标记 = 你在小房间里了 = 可以安全安装。</p>
+
+  <h4>3.2 安装 11 个依赖包</h4>
+  <p>直接复制下面一整条命令，回车：</p>
+  <pre>pip install chromadb openai tiktoken markdown-it-py pdfplumber python-docx beautifulsoup4 lxml python-dotenv streamlit sentence-transformers</pre>
+
+  <div class="box info">
+    <strong>下载要多久？</strong>首次安装大约 2–5 分钟（取决于网速）。会看到进度条在走，最后出现 <code>Successfully installed ...</code> 就完成了。<br>
+    <strong>为什么不用 requirements.txt？</strong>直接一条命令更直观，下面也会介绍文件方式。
+  </div>
+
+  <h4>每个包是干什么的？（以后忘了回来看）</h4>
+  <table>
+    <tr><th style="width:22%">包名</th><th style="width:12%">角色</th><th>一句话说明</th></tr>
+    <tr>
+      <td><code>chromadb</code></td>
+      <td><span class="tag">向量数据库</span></td>
+      <td>把文档的"语义指纹"存进去，搜索时找到最相关的片段</td>
+    </tr>
+    <tr>
+      <td><code>openai</code></td>
+      <td><span class="tag">API 客户端</span></td>
+      <td>调用 LLM 的通用 SDK——DeepSeek 的接口格式跟 OpenAI 一样，所以也用这个包</td>
+    </tr>
+    <tr>
+      <td><code>tiktoken</code></td>
+      <td><span class="tag">Token 计数</span></td>
+      <td>算一段文字占多少 token，分块时确保不超出模型上限</td>
+    </tr>
+    <tr>
+      <td><code>sentence-transformers</code></td>
+      <td><span class="tag">本地 Embedding</span></td>
+      <td>在本地运行 BGE-M3 模型把文字转成向量，<strong>免费、不消耗 API</strong></td>
+    </tr>
+    <tr>
+      <td><code>markdown-it-py</code></td>
+      <td><span class="tag">Markdown 解析</span></td>
+      <td>解析 .md 文件，保留标题层级结构</td>
+    </tr>
+    <tr>
+      <td><code>pdfplumber</code></td>
+      <td><span class="tag">PDF 解析</span></td>
+      <td>提取 PDF 里的文字和表格，中文支持好</td>
+    </tr>
+    <tr>
+      <td><code>python-docx</code></td>
+      <td><span class="tag">Word 解析</span></td>
+      <td>读取 .docx 的段落和标题样式</td>
+    </tr>
+    <tr>
+      <td><code>beautifulsoup4</code></td>
+      <td><span class="tag">HTML 解析</span></td>
+      <td>清洗网页标签，提取纯文本内容</td>
+    </tr>
+    <tr>
+      <td><code>lxml</code></td>
+      <td><span class="tag">HTML 引擎</span></td>
+      <td>BeautifulSoup 的底层解析加速器</td>
+    </tr>
+    <tr>
+      <td><code>python-dotenv</code></td>
+      <td><span class="tag">配置管理</span></td>
+      <td>从 .env 文件读 API Key，不会把密钥写死在代码里</td>
+    </tr>
+    <tr>
+      <td><code>streamlit</code></td>
+      <td><span class="tag">Web 界面</span></td>
+      <td>Phase 4 用，几行代码搭一个 Chat 对话网页</td>
+    </tr>
+  </table>
+
+  <hr>
+
+  <h4>备选安装方式：用 requirements.txt</h4>
+  <p>如果你更喜欢用文件管理依赖（推荐长期维护用），项目里已经准备好了 <code>requirements.txt</code>：</p>
+  <pre>pip install -r requirements.txt</pre>
+  <p style="color:var(--muted);font-size:.85rem">效果跟上面那条长命令完全一样。</p>
+
+  <div class="box ok">
+    <strong>✅ 第 3 步完成。</strong>以后每次打开终端只用做 3.1（激活），不需要重新安装。
+  </div>
+</section>
+
+<!-- ====== 4. API Key ====== -->
+<section id="s4">
+  <h2>第 4 步：配置 API Key</h2>
+
+  <h4>4.1 创建 .env 文件</h4>
+  <p>项目里已经有一个 <code>.env.example</code> 模板文件。把它复制一份，命名为 <code>.env</code>：</p>
+  <pre>copy .env.example .env</pre>
+  <p style="color:var(--muted);font-size:.85rem"><code>.env.example</code> 可以提交到 Git（不包含真实 Key），但 <code>.env</code> 不能提交——所以 .gitignore 里已经忽略了它。</p>
+
+  <h4>4.2 填入 DeepSeek API Key（主力）</h4>
+  <p>打开刚才生成的 <code>.env</code> 文件，找到这一行，把后面的占位符换成你的真实 Key：</p>
+  <pre>DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  ← 换成你自己的</pre>
+
+  <h4>API Key 从哪获取？</h4>
+  <table>
+    <tr><th style="width:15%">平台</th><th style="width:35%">获取地址</th><th>费用说明</th></tr>
+    <tr>
+      <td><strong>DeepSeek</strong></td>
+      <td><a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com/api_keys</a></td>
+      <td>极便宜，百万 token 约 ¥1，中文效果很好，LLM 生成的主力</td>
+    </tr>
+    <tr>
+      <td>OpenAI</td>
+      <td><a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></td>
+      <td>备选，DeepSeek 挂了临时切过来用</td>
+    </tr>
+  </table>
+
+  <div class="box info">
+    <strong>注册 DeepSeek：</strong>打开 <a href="https://platform.deepseek.com" target="_blank">platform.deepseek.com</a> → 注册账号 → 顶部菜单"API Keys"→ 创建新 Key → 复制保存。<br>
+    新用户通常有免费额度，够开发测试用很久。
+  </div>
+
+  <h4>4.3 本项目用哪些 API？</h4>
+  <table>
+    <tr><th>用途</th><th>默认方案</th><th>需要 Key？</th><th>为什么选它</th></tr>
+    <tr>
+      <td>🧠 LLM 生成回答</td>
+      <td><strong>DeepSeek</strong> (deepseek-chat)</td>
+      <td>✅ 需要 DeepSeek Key</td>
+      <td>便宜、中文流畅、OpenAI 兼容格式</td>
+    </tr>
+    <tr>
+      <td>🔢 文本转向量</td>
+      <td><strong>本地 BGE-M3</strong></td>
+      <td>❌ 不需要</td>
+      <td>免费、离线可用、中文效果好、首次运行自动下载模型</td>
+    </tr>
+  </table>
+
+  <p style="margin-top:1rem;color:var(--muted);font-size:.88rem">
+    💡 <strong>为什么 Embedding 用本地模型而不是 API？</strong>因为 Embedding 是纯计算任务，本地跑 BGE-M3 不花钱、不用联网，而且这个模型中文效果很好。当然如果你想用 OpenAI 的 embedding，在 .env 里把 <code>EMBEDDING_PROVIDER</code> 改成 <code>openai</code> 就行。
+  </p>
+
+  <div class="box ok">
+    <strong>✅ 第 4 步完成。</strong>最少只需要一个 DeepSeek API Key，项目就能跑起来了。
+  </div>
+</section>
+
+<!-- ====== 5. 验证 ====== -->
+<section id="s5">
+  <h2>第 5 步：验证一切正常</h2>
+  <p>在终端里（确保已激活 rag-env）依次执行这些检查命令：</p>
+  <pre># 1. 确认在虚拟环境里
+python -c "import sys; print(sys.prefix)"
+# 输出应该包含 rag-env 路径 → 说明在正确环境里
+
+# 2. 逐包检查导入
+python -c "import chromadb;          print('✅ chromadb           ', chromadb.__version__)"
+python -c "import openai;            print('✅ openai             ', openai.__version__)"
+python -c "import tiktoken;          print('✅ tiktoken             OK')"
+python -c "import sentence_transformers; print('✅ sentence-transformers', sentence_transformers.__version__)"
+python -c "import markdown_it;       print('✅ markdown-it-py       OK')"
+python -c "import pdfplumber;        print('✅ pdfplumber           OK')"
+python -c "import docx;              print('✅ python-docx          OK')"
+python -c "import bs4;               print('✅ beautifulsoup4       OK')"
+python -c "import dotenv;            print('✅ python-dotenv        OK')"
+python -c "import streamlit;         print('✅ streamlit            OK')"
+
+# 3. 检查 .env 文件能不能正常读取
+python -c "from dotenv import load_dotenv; import os; load_dotenv(); print('DEEPSEEK_KEY:', os.getenv('DEEPSEEK_API_KEY')[:8]+'...' if os.getenv('DEEPSEEK_API_KEY') else '❌ 未配置')"</pre>
+
+  <div class="box ok">
+    <strong>如果全部输出 ✅，环境搭建就完成了！</strong>可以进入 Phase 1，开始写核心代码。
+  </div>
+</section>
+
+<!-- ====== 速查卡 ====== -->
+<section>
+  <h2>⚡ 速查卡（以后回来就看这里）</h2>
+
+  <h4>每次打开项目要做什么？</h4>
+  <pre>cd D:\vibecoding\project1        # 1. 进目录
+rag-env\Scripts\activate         # 2. 激活虚拟环境（看到 (rag-env) 标记）</pre>
+
+  <h4>如果提示缺少某个包</h4>
+  <pre>pip install chromadb openai tiktoken markdown-it-py pdfplumber python-docx beautifulsoup4 lxml python-dotenv streamlit sentence-transformers</pre>
+
+  <h4>忘记 API Key 配在哪</h4>
+  <pre>项目根目录的 .env 文件 → DEEPSEEK_API_KEY=sk-xxxx</pre>
+
+  <h4>不想要这个环境了</h4>
+  <pre># 直接删掉文件夹即可，不影响系统 Python
+rmdir /s rag-env</pre>
+
+  <h4>包名速记</h4>
+  <table>
+    <tr><td>向量库</td><td><code>chromadb</code></td><td>API</td><td><code>openai</code></td></tr>
+    <tr><td>Token</td><td><code>tiktoken</code></td><td>本地向量</td><td><code>sentence-transformers</code></td></tr>
+    <tr><td>MD解析</td><td><code>markdown-it-py</code></td><td>PDF解析</td><td><code>pdfplumber</code></td></tr>
+    <tr><td>Word解析</td><td><code>python-docx</code></td><td>HTML解析</td><td><code>beautifulsoup4</code> + <code>lxml</code></td></tr>
+    <tr><td>配置</td><td><code>python-dotenv</code></td><td>Web界面</td><td><code>streamlit</code></td></tr>
+  </table>
+</section>
+
+<footer style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:2rem;padding:1rem;">
+  RAG 问答系统 · 从零搭建指南 · 2026-05-13<br>
+  这份指南是写给"未来的自己"看的——任何时候回来都能照着走完。
+</footer>
+
+</div>
+</body>
+</html>
