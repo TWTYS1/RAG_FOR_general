@@ -97,7 +97,24 @@ def _handle_command(cmd: str, retriever: Retriever, hits: list[dict], current_fi
             print(f"\n📎 上一次检索来源 ({len(hits)} 条):")
             for i, hit in enumerate(hits, start=1):
                 meta = hit.get("metadata", {})
-                print(f"  [{i}] {meta.get('source','?')}  [{meta.get('file_type','')}]  {meta.get('heading','')}")
+                parts = [f"  [{i}]"]
+                if meta.get("source"):
+                    parts.append(meta["source"])
+                if meta.get("file_type"):
+                    parts.append(f"[{meta['file_type'].upper()}]")
+                if meta.get("tdoc"):
+                    parts.append(f"TDoc={','.join(meta['tdoc'][:3])}")
+                if meta.get("wg"):
+                    parts.append(f"WG={','.join(meta['wg'][:3])}")
+                if meta.get("meeting"):
+                    parts.append(f"Meeting={','.join(meta['meeting'][:2])}")
+                if meta.get("heading_path"):
+                    parts.append(meta["heading_path"])
+                elif meta.get("heading"):
+                    parts.append(meta["heading"])
+                if hit.get("match_reasons"):
+                    parts.append(f"[{','.join(hit['match_reasons'])}]")
+                print(" · ".join(parts))
             print()
         return None
 

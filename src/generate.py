@@ -1,16 +1,11 @@
-"""生成模块: Prompt 组装 → LLM 调用 → 后处理"""
+"""生成模块: Prompt 组装 → 3GPP 模板选择 → LLM 调用"""
 
 from openai import OpenAI
 from .config import (
     LLM_PROVIDER, LLM_MODEL,
     OPENAI_API_KEY, DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL,
 )
-
-SYSTEM_PROMPT = """你是一个技术文档助手。请严格基于下方提供的文档片段回答问题。
-文档来源可能包含多种格式（Markdown/PDF/Word/网页等）。
-- 如果文档片段足以回答，请给出清晰完整的回答，并在关键信息后标注来源编号，如 [1]、[2]。
-- 如果文档片段不足以回答，请明确说"当前文档库未覆盖此问题"，不要编造信息。
-- 回答使用中文，保持专业、简洁。"""
+from .templates import build_prompt, detect_template, SYSTEM_PROMPT_3GPP
 
 
 class Generator:
@@ -18,23 +13,31 @@ class Generator:
         self.provider = provider or LLM_PROVIDER
         self.model = model or LLM_MODEL
 
-    def generate(self, query: str, context: str) -> str:
+    def generate(self, query: str, context: str, template: str | None = None) -> str:
         if not context:
             return "当前文档库未覆盖此问题。"
 
         client = self._get_client()
-        user_prompt = f"## Context（检索到的文档片段）\n\n{context}\n\n## Query\n{query}"
+        user_prompt = build_prompt(query, context, template=template)
+        tpl = template or detect_template(query)
 
         resp = client.chat.completions.create(
             model=self.model,
             messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": SYSTEM_PROMPT_3GPP},
                 {"role": "user", "content": user_prompt},
             ],
-            temperature=0.3,
-            max_tokens=2000,
+            temperature=0.2,
+            max_tokens=3000,
         )
-        return resp.choices[0].message.content or ""
+        answer = resp.choices[0].message.content or ""
+
+        # 添加模板标签便于调试
+        if answer:
+            tag = {"gap": "📐 差距分析", "issue": "🔍 剩余问题追踪", "patent": "💡 专利机会发现"}.get(tpl, "")
+            if tag:
+                answer = f"**{tag}**\n\n{answer}"
+        return answer
 
     def _get_client(self) -> OpenAI:
         if self.provider == "deepseek":

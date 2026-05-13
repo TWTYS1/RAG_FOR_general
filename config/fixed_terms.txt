@@ -1,0 +1,99 @@
+# 3GPP 固定术语 — 在此增删（每行一个，# 开头为注释）
+# 此文件中的术语会在 BM25 检索时加权 ×1.5
+# 格式: 每行一个术语/编号，精确匹配
+#
+# 常见添加场景:
+#   - 新发现的 TDoc 编号: R1-2401234
+#   - 特定 Spec 章节: TS 38.331 5.2.1
+#   - 公司名/项目名: Qualcomm, Ericsson, 3GPP Release 20
+#   - 特定技术术语: carrier phase, SL PRS, NTN positioning
+
+# ── Release ──
+Rel-17
+Rel-18
+Rel-19
+Rel-20
+
+# ── WG ──
+RAN1
+RAN2
+RAN3
+RAN4
+SA2
+SA3
+SA5
+CT1
+CT3
+CT4
+
+# ── 协议 ──
+NRPPa
+NGAP
+LPP
+RRC
+XnAP
+F1AP
+E1AP
+X2AP
+
+# ── 网元 ──
+LMF
+gNB
+ng-eNB
+UE
+AMF
+UPF
+SMF
+
+# ── Case ──
+Case 1
+Case 2
+Case 3a
+Case 3b
+
+# ── AI/ML ──
+AI/ML
+AI ML
+ML model
+neural network
+
+# ── 定位 ──
+Sidelink positioning
+SL positioning
+NR positioning
+DL-TDOA
+UL-TDOA
+Multi-RTT
+DL-AoD
+UL-AoA
+E-CID
+
+# ── 信号 ──
+PRS
+SRS
+CSI-RS
+SL PRS
+
+# ── 测量量 ──
+RSRP
+RSRQ
+SINR
+RSTD
+RTOA
+AOA
+
+# ── 功能 ──
+MRO
+MDT
+SON
+
+# ── 常用 Spec ──
+TS 38.455
+TS 38.331
+TS 38.215
+TS 37.355
+TR 38.889
+TS 38.305
+TS 38.300
+
+# ── 在此添加你的自定义术语 ──

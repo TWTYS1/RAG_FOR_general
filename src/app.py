@@ -90,12 +90,28 @@ if prompt := st.chat_input("输入你的问题..."):
             with st.expander(f"📎 来源 ({len(hits)} 条)"):
                 for i, hit in enumerate(hits, 1):
                     meta = hit.get("metadata", {})
-                    st.caption(
-                        f"[{i}] {meta.get('source','?')}  "
-                        f"[{meta.get('file_type','').upper()}]  "
-                        f"{meta.get('heading','')}  "
-                        f"{'第'+str(meta['page'])+'页' if meta.get('page') else ''}"
-                    )
+                    parts = [f"[{i}]"]
+                    if meta.get("source"):
+                        parts.append(meta["source"])
+                    if meta.get("file_type"):
+                        parts.append(f"[{meta['file_type'].upper()}]")
+                    if meta.get("tdoc"):
+                        parts.append(f"TDoc={','.join(meta['tdoc'][:3])}")
+                    if meta.get("wg"):
+                        parts.append(f"WG={','.join(meta['wg'][:3])}")
+                    if meta.get("meeting"):
+                        parts.append(f"Meeting={','.join(meta['meeting'][:2])}")
+                    if meta.get("heading_path"):
+                        parts.append(meta["heading_path"])
+                    elif meta.get("heading"):
+                        parts.append(meta["heading"])
+                    if meta.get("keywords"):
+                        parts.append(f"KW: {','.join(meta['keywords'][:5])}")
+                    if hit.get("match_reasons"):
+                        parts.append(f"[{','.join(hit['match_reasons'])}]")
+                    if hit.get("rrf_score"):
+                        parts.append(f"score={hit['rrf_score']:.4f}")
+                    st.caption(" · ".join(parts))
 
             st.session_state.messages.append({
                 "role": "assistant",

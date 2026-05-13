@@ -1,4 +1,4 @@
-"""文档预处理入口: 遍历 -> 解析 -> 分块 -> 向量化 -> 存储"""
+"""文档预处理入口: 遍历 -> 解析 -> 分块 -> 向量化 -> 存储（含 BM25）"""
 
 import uuid
 from pathlib import Path
@@ -7,15 +7,16 @@ from .parsers.router import FileTypeRouter
 from .chunker import SemanticChunker
 from .embedder import Embedder
 from .chroma_store import ChromaStore
+from .bm25_index import get_shared_bm25
 
 
 class IngestPipeline:
-    def __init__(self, docs_dir: str | None = None):
+    def __init__(self, docs_dir: str | None = None, use_bm25: bool = True):
         self.docs_dir = Path(docs_dir or DOCS_DIR).resolve()
         self.router = FileTypeRouter()
         self.chunker = SemanticChunker()
         self.embedder = Embedder()
-        self.store = ChromaStore()
+        self.store = ChromaStore(bm25_index=get_shared_bm25() if use_bm25 else None)
 
     def run(self, clear: bool = False) -> int:
         if clear:

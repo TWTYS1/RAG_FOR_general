@@ -1,0 +1,29 @@
+# 3GPP 术语映射 — 中文 → 英文扩展（# 开头为注释）
+# 格式: 中文触发词 -> 英文扩展1, 英文扩展2, ...
+# 每行一条映射，箭头两边用 -> 分隔
+#
+# 常见添加场景:
+#   - 你的领域里常用的中文术语
+#   - 某篇 TDoc 中反复出现的专业译法
+#   - 中英文混用的特定表达
+
+# ── 示例（取消 # 即可启用）──
+
+# 载波相位 -> carrier phase, carrier phase positioning, integer ambiguity
+# 非地面网络 -> NTN, non-terrestrial network, satellite positioning
+# 侧链 -> sidelink, SL, PC5 interface
+# 往返时间 -> RTT, round trip time, Multi-RTT
+# 到达角 -> AoA, angle of arrival, DL-AoD
+# 离开角 -> AoD, angle of departure, UL-AoA
+# 误差 -> error, measurement error, synchronization error, timing error
+# 同步 -> synchronization, sync, time sync, network sync
+# 校准 -> calibration, antenna calibration, timing calibration
+# 波束管理 -> beam management, beam sweeping, beam refinement
+# 资源分配 -> resource allocation, resource configuration, resource set
+# 半静态 -> semi-persistent, semi-static, periodic
+# 非周期 -> aperiodic, on-demand, triggered
+# 触发 -> triggered, event-triggered, on-demand, aperiodic
+# 激活 -> activation, activated, MAC CE activation
+# 去激活 -> deactivation, deactivated, release
+
+# ── 在此添加你的自定义映射 ──
