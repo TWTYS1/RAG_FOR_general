@@ -1,9 +1,9 @@
-"""SemanticChunker: 按文件类型选择分块策略 — 段落 / Markdown感知 / 递归回退"""
+"""SemanticChunker: 按文件类型选择分块策略 — 段落 / Markdown感知 / DOCX heading-path / 递归回退 / 关键词强化"""
 
 import re
 import tiktoken
-from .parsers.base import Document
-from .config import CHUNK_SIZE, CHUNK_OVERLAP
+from .parsers.base import Document, _3GPP_KEYWORDS
+from .config import CHUNK_SIZE, CHUNK_OVERLAP, KEYWORD_BOOST_CHUNKS
 
 _ENC = tiktoken.get_encoding("cl100k_base")
 
@@ -12,19 +12,50 @@ def _count_tokens(text: str) -> int:
     return len(_ENC.encode(text))
 
 
+# 3GPP 高优先级关键词 — 命中后生成 boost chunk
+_BOOST_KEYWORDS_LOWER = [kw.lower() for kw in _3GPP_KEYWORDS]
+
+
+def _score_keyword_hits(text: str) -> int:
+    """统计文本中 3GPP 关键词的命中次数（加权）"""
+    lower = text.lower()
+    score = 0
+    for kw in _BOOST_KEYWORDS_LOWER:
+        score += lower.count(kw) * (3 if "remaining" in kw or "open issue" in kw or "way forward" in kw or "ffs" == kw else 1)
+    return score
+
+
 class SemanticChunker:
     def __init__(self, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP):
         self.chunk_size = chunk_size
         self.overlap = overlap
+        self._boost_enabled = KEYWORD_BOOST_CHUNKS
 
     def chunk(self, documents: list[Document]) -> list[Document]:
         chunks: list[Document] = []
         for doc in documents:
             file_type = doc.metadata.get("file_type", "")
-            if file_type in (".md", "markdown"):
+
+            # DOCX 且有 heading_path → 用 heading-path 保留切分
+            if file_type == "docx" and doc.metadata.get("heading_path"):
+                chunks.extend(self._heading_path_split(doc))
+            elif file_type in (".md", "markdown"):
                 chunks.extend(self._markdown_split(doc))
             else:
                 chunks.extend(self._paragraph_split(doc))
+
+        # ── 关键词强化：为含 3GPP 关键词的 chunk 生成副本 ──
+        if self._boost_enabled:
+            boost_chunks: list[Document] = []
+            for c in chunks:
+                kw_score = _score_keyword_hits(c.text)
+                if kw_score >= 3:  # 至少命中 3 次
+                    boost_meta = dict(c.metadata)
+                    boost_meta["keyword_boost"] = True
+                    boost_meta["keyword_score"] = kw_score
+                    boost_chunks.append(Document(text=c.text, metadata=boost_meta))
+            chunks.extend(boost_chunks)
+
         return chunks
 
     def _paragraph_split(self, doc: Document) -> list[Document]:
@@ -130,6 +161,32 @@ class SemanticChunker:
             collected.append(s)
             tokens += t
         return " ".join(reversed(collected))
+
+    # ── DOCX heading-path 感知分割 ────────────────────
+
+    def _heading_path_split(self, doc: Document) -> list[Document]:
+        """按 section heading_path 优先切分，保留层级上下文"""
+        text = doc.text
+        heading_path = doc.metadata.get("heading_path", "")
+        heading = doc.metadata.get("heading", "")
+
+        # 小 section 直接作为一个 chunk
+        if _count_tokens(text) <= self.chunk_size:
+            meta = dict(doc.metadata)
+            meta["chunk_strategy"] = "heading-path"
+            return [Document(text=text, metadata=meta)]
+
+        # 大 section → 尝试段落分割，但注入 heading_path 到每个子 chunk
+        sub_chunks = self._paragraph_split(doc)
+        for c in sub_chunks:
+            c.metadata["heading_path"] = heading_path
+            c.metadata["heading"] = heading
+            c.metadata["chunk_strategy"] = "heading-path+paragraph"
+            for k in ("tdoc", "cr", "spec", "wg", "meeting", "company",
+                       "title", "keywords", "agenda_item", "rel", "ls"):
+                if k in doc.metadata and k not in c.metadata:
+                    c.metadata[k] = doc.metadata[k]
+        return sub_chunks
 
     # ── Markdown 感知分割 ──────────────────────────────
 

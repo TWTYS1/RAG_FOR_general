@@ -23,11 +23,14 @@ EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "local")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "Qwen/Qwen3-Embedding-0.6B")
 
 # --- 分块 ---
-CHUNK_SIZE = 500
-CHUNK_OVERLAP = 100
+CHUNK_SIZE = 800           # 3GPP 段落密度适配
+CHUNK_OVERLAP = 150
+KEYWORD_BOOST_CHUNKS = True  # 为含 3GPP 关键词的段落生成强化索引副本
 
 # --- 检索 ---
 TOP_K = 8
+HYBRID_TOP_K = 50          # 混合检索初召回数
+RERANK_TOP_K = 15          # 重排序后保留数
 
 # --- 支持的文件格式 ---
 SUPPORTED_EXTENSIONS = {".md", ".pdf", ".txt", ".docx", ".html", ".htm"}
