@@ -43,8 +43,8 @@ class IngestPipeline:
     def run(self, clear: bool = False, incremental: bool = False) -> int:
         if clear:
             self.store.clear()
-            self._save_manifest({})
-            incremental = False  # clear 后不需要增量逻辑
+            # 不删 manifest —— 崩了可以从断点续传
+            incremental = False
 
         # 维度兼容检测
         stored_dim = self.store.peek_dimension()
@@ -67,17 +67,21 @@ class IngestPipeline:
         return self._run_full(current_files)
 
     def _run_full(self, files: list[Path]) -> int:
-        """全量索引（首次或无增量信息时）"""
-        manifest: dict[str, float] = {}
+        """全量索引（断点续传：每处理一个文件就更新 manifest）"""
+        manifest = self._load_manifest()  # 从上次断点恢复
         total_chunks = 0
         for file_path in files:
+            rel = str(file_path.relative_to(self.docs_dir))
+            mtime = file_path.stat().st_mtime
+            if rel in manifest and abs(manifest[rel] - mtime) <= 1:
+                continue  # 断点续传：跳过已完成的文件
+
             chunks = self._process_file(file_path)
             if chunks is not None:
                 total_chunks += chunks
-            rel = str(file_path.relative_to(self.docs_dir))
-            manifest[rel] = file_path.stat().st_mtime
+            manifest[rel] = mtime
+            self._save_manifest(manifest)  # 逐文件保存，崩了也不丢进度
 
-        self._save_manifest(manifest)
         print(f"\n[DONE] Full index: {len(files)} files -> {total_chunks} chunks")
         return total_chunks
 
