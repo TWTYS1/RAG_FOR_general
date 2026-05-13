@@ -1,44 +1,56 @@
-# RAG 项目工作约定
+# 3GPP AI 定位 RAG 工作约定
 
-## 风险评估机制
+## 项目定位
+3GPP AIML-based Positioning 标准文档的语义检索与分析平台。
+用户是标准研究员，需要从 TDoc / CR / 会议纪要 / TR 规范中挖掘论文思路和专利机会。
 
-执行任何操作前，按以下标准判定风险等级：
+## 风险评估
 
-### 🟢 低风险 → 直接执行
-- 在 `src/` 下编辑/创建 Python 文件
-- 在 `docs/` 下添加或修改测试文档
-- 在项目根目录生成 HTML/文档文件
-- 运行 `python check_env.py` 等只读检查
-- pip install 到 `rag-env/` 虚拟环境内
+| 风险 | 行为 | 示例 |
+|------|------|------|
+| 🟢 低 | 直接执行 | src/ 编辑, docs/ 加文件, 运行索引/审计, pip install 到 rag-env |
+| 🟡 中 | 告知后执行 | 改 .env, 改 CLAUDE.md, 改 requirements.txt |
+| 🔴 高 | 必须征得同意 | 项目外操作, git push --force, 系统级安装 |
 
-### 🟡 中风险 → 告知后执行
-- 修改 .env 或 .env.example（涉及密钥配置）
-- 修改 requirements.txt（影响依赖版本）
-- 修改 CLAUDE.md（影响后续工作行为）
-- pip install 到系统全局 Python
-- 创建新的顶级目录
+## 项目边界
+- 所有产物在 `D:\vibecoding\project1\` 内
+- 虚拟环境 `rag-env/`，ChromaDB 数据 `chroma_data_3gpp/`
+- .env 不提交 Git
 
-### 🔴 高风险 → 必须征得同意
-- 删除项目外的任何文件/目录
-- 修改系统环境变量（PATH、注册表等）
-- 在项目目录外创建文件
-- `rm -rf`、`git push --force` 等不可逆操作
-- 涉及 C 盘的写入操作
-- 安装系统级软件
-
-## 项目边界约束
-
-- 所有代码、数据、配置 **必须** 在 `D:\vibecoding\project1\` 内
-- 虚拟环境在 `rag-env/`，Python 包不污染系统
-- ChromaDB 数据在 `chroma_data/`，可随时删除重建
-- .env 不提交到 Git（已在 .gitignore 中）
-
-## 技术栈速查
+## 技术栈
 
 | 层 | 方案 |
 |-----|------|
-| LLM | DeepSeek (deepseek-chat)，OpenAI 备选 |
-| Embedding | 本地 BGE-M3，免费免联网 |
-| 向量库 | ChromaDB，本地持久化 |
-| 解析 | markdown-it-py / pdfplumber / python-docx / BeautifulSoup |
-| UI | CLI → Streamlit |
+| LLM | DeepSeek (deepseek-chat) |
+| Embedding | Qwen3-Embedding-0.6B (1024-dim, GPU) |
+| 向量库 | ChromaDB 持久化 + BM25Okapi 稀疏索引 |
+| 检索 | Dense + BM25 RRF 融合 (k=60) |
+| 重排序 | BAAI/bge-reranker-v2-m3 Cross-Encoder |
+| 文档解析 | python-docx / pdfplumber / markdown-it-py |
+| 生成 | 3GPP 模板路由 (gap / issue / patent) |
+| UI | CLI 直接调用 → 可启动 Streamlit |
+
+## 文档库 (docs/3gpp/)
+- `cr/` — Change Request 文档
+- `meetings/` — RAN1/RAN2/RAN3 会议纪要
+- `specs/` — TR 38.843 等规范段落
+- `tdocs/` — 各公司技术贡献文档
+- **审计**: `IngestPipeline(docs_dir='docs/3gpp').run(audit_only=True)` → ingest_audit_report.json/md
+- **入库**: `IngestPipeline(docs_dir='docs/3gpp').run(incremental=True)` — 只处理新/改/删文件，断点续传
+
+## 用户工作流
+种子 TDoc/会议 → 检索摸底 → 定向扩词 → 精准下载 → 喂回验证 → 锁定缺口 → 再扩相邻
+
+## 检索提问模式
+当用户问专利/差距/问题相关的 3GPP 问题时：
+1. 运行 `Retriever().search(query)` 获取混合检索结果
+2. 用 `Retriever().format_context(hits)` 格式化为 evidence
+3. 如果用户问专利/差距/未解决问题，启用对应模板（detect_template）
+4. 通过 `Generator().generate(query, context, template)` 调 DeepSeek 生成分析
+5. 输出包含：证据引用、差距识别、专利机会建议
+
+## 专利分析方法
+- 先定位哪些技术点被多份 TDoc 反复提及但未进入规范正文
+- 检查 CR 中标记为 "remaining issue" "open issue" "FFS" 的内容
+- 交叉对比会议纪要中的未达成共识点与 TR 中的空白章节
+- 结论必须标注来源编号 [1] [2]，编不出东西时明确说"当前文档库未覆盖"
